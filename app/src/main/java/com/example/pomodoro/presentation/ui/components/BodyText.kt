@@ -1,33 +1,34 @@
 package com.example.pomodoro.presentation.ui.components
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 
+
 @Composable
-public fun HeadingText(
+fun BodyText(
     content: String,
 ) {
     Text(
         text = content,
         color = MaterialTheme.colorScheme.secondary,
         fontWeight = Bold,
-        fontSize = 20.sp,
-        modifier = Modifier.padding(bottom = 6.dp)
+        fontSize = 16.sp
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewHeadingText() {
-    PomodoroTheme() {
+fun PreviewBodyText() {
+    Column {
+    PomodoroTheme {
         HeadingText("This is title text")
+        BodyText("This is body text")
+    }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.pomodoro.presentation.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +28,8 @@ import androidx.compose.ui.unit.sp
 public fun Card(cardHeading: String, cardBody : String) {
     Card(
         modifier = Modifier
-            .size(width = 190.dp, height = 190.dp),
+            .size(width = 190.dp, height = 190.dp)
+            .background(color = MaterialTheme.colorScheme.secondary),
         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
     ) {
         Column(
