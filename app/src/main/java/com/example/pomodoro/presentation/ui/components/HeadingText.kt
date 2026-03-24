@@ -12,22 +12,22 @@ import androidx.compose.ui.unit.sp
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 
 @Composable
-public fun HeadingText(
+fun HeadingText(
     content: String,
 ) {
     Text(
         text = content,
         color = MaterialTheme.colorScheme.secondary,
         fontWeight = Bold,
-        fontSize = 20.sp,
-        modifier = Modifier.padding(bottom = 6.dp)
+        fontSize = 25.sp,
+        modifier = Modifier.padding(bottom = 12.dp)
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewHeadingText() {
-    PomodoroTheme() {
+    PomodoroTheme {
         HeadingText("This is title text")
     }
 }

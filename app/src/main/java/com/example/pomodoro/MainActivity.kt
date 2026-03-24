@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +21,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pomodoro.presentation.theme.PomodoroTheme
+import com.example.pomodoro.presentation.ui.components.Card
+import com.example.pomodoro.presentation.ui.components.HeadingText
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +36,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     )
                     ItemsList()
+
                 }
             }
         }
@@ -71,12 +75,11 @@ fun GreetingPreview() {
         Column(
             modifier = Modifier
                 .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "This is a list:",
-            color = Color.Red
+            horizontalAlignment = Alignment.CenterHorizontally
         )
-        ItemsList()
+        {
+            HeadingText("Welcome to my pomodoro timer")
+            Card("This is heading", "Bla bla bla, this is body text")
     }
     }
 }
