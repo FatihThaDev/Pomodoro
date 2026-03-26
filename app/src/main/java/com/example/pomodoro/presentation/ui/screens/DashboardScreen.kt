@@ -96,10 +96,10 @@ fun DashboardScreen() {
 }
 
 private fun formatTime(time: Int): String {
-    if (time < 10) {
-        return "0$time"
-    } else {
-        return time.toString()
+    return if (time < 10) { 
+        "0$time"
+    } else { 
+        time.toString()
     }
 }
 

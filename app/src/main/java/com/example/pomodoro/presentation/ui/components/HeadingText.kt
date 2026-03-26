@@ -19,7 +19,7 @@ fun HeadingText(
         text = content,
         color = MaterialTheme.colorScheme.secondary,
         fontWeight = Bold,
-        fontSize = 25.sp,
+        fontSize = 30.sp,
         modifier = Modifier.padding(bottom = 12.dp)
     )
 }

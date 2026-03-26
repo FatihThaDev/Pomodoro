@@ -118,7 +118,7 @@ fun Register() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewLogin() {
+fun PreviewRegister() {
     PomodoroTheme {
         Register()
     }
