@@ -1,5 +1,3 @@
-@file:JvmName("LoginScreenKt")
-
 package com.example.pomodoro.presentation.ui.screens
 
 import androidx.compose.foundation.background
@@ -15,9 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +32,12 @@ fun Login() {
 
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    var usernameError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
+
+    val submitButtonAvailable = username.isNotEmpty() && password.isNotEmpty()
+            && !usernameError && !passwordError
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -52,17 +56,29 @@ fun Login() {
         ) {
             TextField(
                 value = username,
-                onValueChange = { username = it },
+                onValueChange = {
+                    username = it
+                    usernameError = it.length < 3 && it.isNotEmpty()
+                },
                 label = { Text("Username") },
                 placeholder = { Text("JohnD67") },
+                isError = usernameError,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
+            if (usernameError) {
+                Text("Username must be at least 3 characters", color = Color.Red)
+            }
+
             TextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = {
+                    password = it
+                    passwordError = it.length < 6 && it.isNotEmpty()
+                },
                 label = { Text("Password") },
                 placeholder = { Text("Supersecurepass123") },
+                isError = passwordError,
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
@@ -70,6 +86,9 @@ fun Login() {
                     imeAction = ImeAction.Done
                 )
             )
+            if (passwordError) {
+                Text("Password must be at least 6 characters", color = Color.Red)
+            }
         }
 
         Column(
@@ -80,6 +99,7 @@ fun Login() {
         ) {
             Button(
                 onClick = {},
+                enabled = submitButtonAvailable,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Log In")
@@ -88,7 +108,7 @@ fun Login() {
                 onClick = {},
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Forgot Password")
+                Text("Forgot Password?")
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.pomodoro.presentation.ui.screens
 
+import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,8 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
-import androidx.compose.material3.TextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +36,17 @@ fun Register() {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    var firstNameError by remember { mutableStateOf(false) }
+    var lastNameError by remember { mutableStateOf(false) }
+    var usernameError by remember { mutableStateOf(false) }
+    var emailError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
+
+    val submitButtonAvailable = (firstName.isNotEmpty() && lastName.isNotEmpty()
+            && username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty())
+            && !firstNameError && !lastNameError && !usernameError && !emailError
+            && !passwordError
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -52,44 +64,80 @@ fun Register() {
         ) {
             TextField(
                 value = firstName,
-                onValueChange = { firstName = it },
+                onValueChange = {
+                    firstName = it
+                    firstNameError = it.length < 2 && it.isNotEmpty()
+                },
                 label = { Text("First Name") },
                 placeholder = { Text("John") },
+                isError = firstNameError,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
+            if (firstNameError) {
+                Text("First name must be at least 2 characters", color = Color.Red)
+            }
+
             TextField(
                 value = lastName,
-                onValueChange = { lastName = it },
+                onValueChange = {
+                    lastName = it
+                    lastNameError = it.length < 2 && it.isNotEmpty()
+                },
                 label = { Text("Last Name") },
                 placeholder = { Text("Doe") },
+                isError = lastNameError,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
+            if (lastNameError) {
+                Text("Last name must be at least 2 characters", color = Color.Red)
+            }
+
             TextField(
                 value = username,
-                onValueChange = { username = it },
+                onValueChange = {
+                    username = it
+                    usernameError = it.length < 3 && it.isNotEmpty()
+                },
                 label = { Text("Username") },
                 placeholder = { Text("JohnD67") },
+                isError = usernameError,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
+            if (usernameError) {
+                Text("Username must be at least 3 characters", color = Color.Red)
+            }
+
             TextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = {
+                    email = it
+                    emailError = !Patterns.EMAIL_ADDRESS.matcher(it).matches() && it.isNotEmpty()
+                },
                 label = { Text("Email") },
                 placeholder = { Text("Your account email") },
+                isError = emailError,
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
                 )
             )
+            if (emailError) {
+                Text("Invalid email address", color = Color.Red)
+            }
+
             TextField(
                 value = password,
-                onValueChange = { password = it },
+                onValueChange = {
+                    password = it
+                    passwordError = it.length < 6 && it.isNotEmpty()
+                },
                 label = { Text("Password") },
                 placeholder = { Text("Your account password") },
+                isError = passwordError,
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(
@@ -97,6 +145,9 @@ fun Register() {
                     imeAction = ImeAction.Done
                 )
             )
+            if (passwordError) {
+                Text("Password must be at least 6 characters", color = Color.Red)
+            }
         }
 
         Column(
@@ -108,6 +159,7 @@ fun Register() {
         ) {
             Button(
                 onClick = {},
+                enabled = submitButtonAvailable,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Create Account")
