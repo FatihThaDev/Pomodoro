@@ -51,7 +51,7 @@ fun Register() {
                 value = username,
                 onValueChange = { username = it },
                 label = { Text("Username") },
-                placeholder = { Text("John") },
+                placeholder = { Text("JohnD67") },
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
