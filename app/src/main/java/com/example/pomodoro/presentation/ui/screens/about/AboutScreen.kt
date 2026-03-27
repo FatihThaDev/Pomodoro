@@ -1,4 +1,4 @@
-package com.example.pomodoro.presentation.ui.screens
+package com.example.pomodoro.presentation.ui.screens.about
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,8 +21,9 @@ import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.InfoRow
 
+
 @Composable
-fun Donate() {
+fun About() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -30,8 +31,10 @@ fun Donate() {
             .fillMaxSize()
             .padding(vertical = 35.dp, horizontal = 20.dp)
     ) {
-        HeadingText("Support My Work")
-        BodyText("Your donations help me keep creating free apps!")
+        HeadingText("About Pomodoro")
+        BodyText("Pomodoro is a time management method that breaks " +
+                "work into focused intervals to boost productivity " +
+                "and reduce burnout")
 
         Column(
             modifier = Modifier
@@ -40,17 +43,17 @@ fun Donate() {
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            InfoRow(icon = Icons.Default.Email, label = "PayPal", value = "paypal@example.com")
-            InfoRow(icon = Icons.Default.Face, label = "Bitcoin", value = "1A2B3C4D5E6F")
-            InfoRow(icon = Icons.Default.Favorite, label = "Patreon", value = "patreon.com/FatihTheDev")
+            InfoRow(icon = Icons.Default.Person, label = "Developer", value = "FatihTheDev")
+            InfoRow(icon = Icons.Default.Info, label = "Version", value = "1.0.0")
+            InfoRow(icon = Icons.Default.Build, label = "License", value = "MIT")
         }
     }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewDonate() {
+fun PreviewAbout() {
     PomodoroTheme {
-        Donate()
+        About()
     }
 }

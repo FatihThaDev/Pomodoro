@@ -1,6 +1,5 @@
-package com.example.pomodoro.presentation.ui.screens
+package com.example.pomodoro.presentation.ui.screens.login
 
-import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -26,26 +26,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.HeadingText
+import com.example.pomodoro.presentation.ui.util.Validation
 
 @Composable
-fun Register() {
+fun Login() {
 
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    var firstNameError by remember { mutableStateOf(false) }
-    var lastNameError by remember { mutableStateOf(false) }
     var usernameError by remember { mutableStateOf(false) }
-    var emailError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }
 
-    val submitButtonAvailable = (firstName.isNotEmpty() && lastName.isNotEmpty()
-            && username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty())
-            && !firstNameError && !lastNameError && !usernameError && !emailError
-            && !passwordError
+    val submitButtonAvailable = username.isNotEmpty() && password.isNotEmpty()
+            && !usernameError && !passwordError
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -54,7 +47,7 @@ fun Register() {
             .fillMaxSize()
             .padding(vertical = 35.dp, horizontal = 20.dp)
     ) {
-        HeadingText("Create Account")
+        HeadingText("Log In")
 
         Column(
             modifier = Modifier
@@ -63,42 +56,10 @@ fun Register() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             TextField(
-                value = firstName,
-                onValueChange = {
-                    firstName = it
-                    firstNameError = it.length < 2 && it.isNotEmpty()
-                },
-                label = { Text("First Name") },
-                placeholder = { Text("John") },
-                isError = firstNameError,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
-            if (firstNameError) {
-                Text("First name must be at least 2 characters", color = Color.Red)
-            }
-
-            TextField(
-                value = lastName,
-                onValueChange = {
-                    lastName = it
-                    lastNameError = it.length < 2 && it.isNotEmpty()
-                },
-                label = { Text("Last Name") },
-                placeholder = { Text("Doe") },
-                isError = lastNameError,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
-            if (lastNameError) {
-                Text("Last name must be at least 2 characters", color = Color.Red)
-            }
-
-            TextField(
                 value = username,
                 onValueChange = {
                     username = it
-                    usernameError = it.length < 3 && it.isNotEmpty()
+                    usernameError = !Validation.isValidUsername(it)
                 },
                 label = { Text("Username") },
                 placeholder = { Text("JohnD67") },
@@ -111,32 +72,13 @@ fun Register() {
             }
 
             TextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                    emailError = !Patterns.EMAIL_ADDRESS.matcher(it).matches() && it.isNotEmpty()
-                },
-                label = { Text("Email") },
-                placeholder = { Text("Your account email") },
-                isError = emailError,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
-                )
-            )
-            if (emailError) {
-                Text("Invalid email address", color = Color.Red)
-            }
-
-            TextField(
                 value = password,
                 onValueChange = {
                     password = it
-                    passwordError = it.length < 6 && it.isNotEmpty()
+                    passwordError = !Validation.isValidPassword(it)
                 },
                 label = { Text("Password") },
-                placeholder = { Text("Your account password") },
+                placeholder = { Text("Supersecurepass123") },
                 isError = passwordError,
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
@@ -154,15 +96,20 @@ fun Register() {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Button(
                 onClick = {},
                 enabled = submitButtonAvailable,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Create Account")
+                Text("Log In")
+            }
+            OutlinedButton(
+                onClick = {},
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Forgot Password?")
             }
         }
     }
@@ -170,8 +117,8 @@ fun Register() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewRegister() {
+fun PreviewLogin() {
     PomodoroTheme {
-        Register()
+        Login()
     }
 }

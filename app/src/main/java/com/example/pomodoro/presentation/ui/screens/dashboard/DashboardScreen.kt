@@ -1,4 +1,4 @@
-package com.example.pomodoro.presentation.ui.screens
+package com.example.pomodoro.presentation.ui.screens.dashboard
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
