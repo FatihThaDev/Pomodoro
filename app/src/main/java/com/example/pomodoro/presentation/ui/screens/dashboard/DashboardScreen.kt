@@ -12,9 +12,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,12 +28,14 @@ import androidx.compose.ui.unit.sp
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.InfoRow
+import kotlinx.coroutines.delay
 
 @Composable
 fun DashboardScreen() {
 
-    var minutes by remember { mutableIntStateOf(25) }
-    var seconds by remember { mutableIntStateOf(0) }
+    var minutes by rememberSaveable { mutableIntStateOf(25) }
+    var seconds by rememberSaveable { mutableIntStateOf(0) }
+    var isRunning by rememberSaveable { mutableStateOf(false) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -64,10 +68,14 @@ fun DashboardScreen() {
                 Button(onClick = {}) {
                     Text("Start")
                 }
-                OutlinedButton(onClick = {}) {
+                OutlinedButton(onClick = { isRunning = false }) {
                     Text("Pause")
                 }
-                OutlinedButton(onClick = {}) {
+                OutlinedButton(onClick = {
+                    minutes = 25
+                    seconds = 0
+                    isRunning = false
+                }) {
                     Text("Reset")
                 }
             }
@@ -96,9 +104,9 @@ fun DashboardScreen() {
 }
 
 private fun formatTime(time: Int): String {
-    return if (time < 10) { 
-        "0$time"
-    } else { 
+    return if (time < 10) {
+        "0${time}"
+    } else {
         time.toString()
     }
 }

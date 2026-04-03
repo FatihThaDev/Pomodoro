@@ -65,7 +65,7 @@ fun RegisterScreen(
             TextField(
                 value = firstName,
                 onValueChange = {
-                        onFirstNameChange(it)
+                    onFirstNameChange(it)
                 },
                 label = { Text("First Name") },
                 placeholder = { Text("John") },

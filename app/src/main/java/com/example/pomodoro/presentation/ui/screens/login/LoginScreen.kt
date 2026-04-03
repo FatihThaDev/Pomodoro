@@ -29,16 +29,15 @@ import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.util.Validation
 
 @Composable
-fun Login() {
-
-    var username by rememberSaveable { mutableStateOf("") }
-    var usernameError by rememberSaveable {mutableStateOf(false)}
-
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordError by rememberSaveable {mutableStateOf(false)}
-
-    val isSubmitEnabled = username.isNotEmpty() && password.isNotEmpty() &&
-            !usernameError && !passwordError
+fun LoginScreen(
+    username: String,
+    password: String,
+    usernameError: Boolean,
+    passwordError: Boolean,
+    usernameChange: (String) -> Unit,
+    passwordChange: (String) -> Unit,
+    isSubmitEnabled: Boolean
+) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,8 +57,7 @@ fun Login() {
             TextField(
                 value = username,
                 onValueChange = {
-                        username = it
-                        usernameError = !Validation.isValidUsername(it)
+                    usernameChange(it)
                 },
                 label = { Text("Username") },
                 placeholder = { Text("JohnD67") },
@@ -74,8 +72,7 @@ fun Login() {
             TextField(
                 value = password,
                 onValueChange = {
-                        password = it
-                        passwordError = !Validation.isValidPassword(it)
+                    passwordChange(it)
                 },
                 label = { Text("Password") },
                 placeholder = { Text("Supersecurepass123") },
@@ -113,6 +110,35 @@ fun Login() {
             }
         }
     }
+}
+
+@Composable
+private fun Login() {
+    var username by rememberSaveable { mutableStateOf("") }
+    var usernameError by rememberSaveable {mutableStateOf(false)}
+
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordError by rememberSaveable {mutableStateOf(false)}
+
+    val isSubmitEnabled = username.isNotEmpty() && password.isNotEmpty() &&
+            !usernameError && !passwordError
+
+
+    LoginScreen(
+        username = username,
+        password = password,
+        usernameError = usernameError,
+        passwordError = passwordError,
+        isSubmitEnabled = isSubmitEnabled,
+        usernameChange = {
+            username = it
+            usernameError = !Validation.isValidUsername(it)
+        },
+        passwordChange = {
+            password = it
+            passwordError = !Validation.isValidPassword(it)
+        }
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
