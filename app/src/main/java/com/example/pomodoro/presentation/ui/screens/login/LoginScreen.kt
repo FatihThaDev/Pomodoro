@@ -14,7 +14,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,14 +31,14 @@ import com.example.pomodoro.presentation.ui.util.Validation
 @Composable
 fun Login() {
 
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var username by rememberSaveable { mutableStateOf("") }
+    var usernameError by rememberSaveable {mutableStateOf(false)}
 
-    var usernameError by remember { mutableStateOf(false) }
-    var passwordError by remember { mutableStateOf(false) }
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordError by rememberSaveable {mutableStateOf(false)}
 
-    val submitButtonAvailable = username.isNotEmpty() && password.isNotEmpty()
-            && !usernameError && !passwordError
+    val isSubmitEnabled = username.isNotEmpty() && password.isNotEmpty() &&
+            !usernameError && !passwordError
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,8 +58,8 @@ fun Login() {
             TextField(
                 value = username,
                 onValueChange = {
-                    username = it
-                    usernameError = !Validation.isValidUsername(it)
+                        username = it
+                        usernameError = !Validation.isValidUsername(it)
                 },
                 label = { Text("Username") },
                 placeholder = { Text("JohnD67") },
@@ -74,8 +74,8 @@ fun Login() {
             TextField(
                 value = password,
                 onValueChange = {
-                    password = it
-                    passwordError = !Validation.isValidPassword(it)
+                        password = it
+                        passwordError = !Validation.isValidPassword(it)
                 },
                 label = { Text("Password") },
                 placeholder = { Text("Supersecurepass123") },
@@ -100,7 +100,7 @@ fun Login() {
         ) {
             Button(
                 onClick = {},
-                enabled = submitButtonAvailable,
+                enabled = isSubmitEnabled,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Log In")

@@ -13,7 +13,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,25 +28,25 @@ import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.util.Validation
 
 @Composable
-fun Register() {
-
-    var firstName by remember { mutableStateOf("") }
-    var lastName by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    var firstNameError by remember { mutableStateOf(false) }
-    var lastNameError by remember { mutableStateOf(false) }
-    var usernameError by remember { mutableStateOf(false) }
-    var emailError by remember { mutableStateOf(false) }
-    var passwordError by remember { mutableStateOf(false) }
-
-    val submitButtonAvailable = firstName.isNotEmpty() && lastName.isNotEmpty()
-            && username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()
-            && !firstNameError && !lastNameError && !usernameError && !emailError
-            && !passwordError
-
+fun RegisterScreen(
+    firstName: String,
+    onFirstNameChange: (String) -> Unit,
+    firstNameError: Boolean,
+    lastName: String,
+    onLastNameChange: (String) -> Unit,
+    lastNameError: Boolean,
+    username: String,
+    onUsernameChange: (String) -> Unit,
+    usernameError: Boolean,
+    email: String,
+    onEmailChange: (String) -> Unit,
+    emailError: Boolean,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    passwordError: Boolean,
+    isSubmitEnabled: Boolean
+)
+{
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -65,8 +65,7 @@ fun Register() {
             TextField(
                 value = firstName,
                 onValueChange = {
-                    firstName = it
-                    firstNameError = !Validation.isValidName(it)
+                        onFirstNameChange(it)
                 },
                 label = { Text("First Name") },
                 placeholder = { Text("John") },
@@ -81,8 +80,7 @@ fun Register() {
             TextField(
                 value = lastName,
                 onValueChange = {
-                    lastName = it
-                    lastNameError = !Validation.isValidName(it)
+                    onLastNameChange(it)
                 },
                 label = { Text("Last Name") },
                 placeholder = { Text("Doe") },
@@ -97,8 +95,7 @@ fun Register() {
             TextField(
                 value = username,
                 onValueChange = {
-                    username = it
-                    usernameError = !Validation.isValidUsername(it)
+                    onUsernameChange(it)
                 },
                 label = { Text("Username") },
                 placeholder = { Text("JohnD67") },
@@ -113,8 +110,7 @@ fun Register() {
             TextField(
                 value = email,
                 onValueChange = {
-                    email = it
-                    emailError = !Validation.isValidEmail(it)
+                    onEmailChange(it)
                 },
                 label = { Text("Email") },
                 placeholder = { Text("Your account email") },
@@ -132,8 +128,7 @@ fun Register() {
             TextField(
                 value = password,
                 onValueChange = {
-                    password = it
-                    passwordError = !Validation.isValidPassword(it)
+                    onPasswordChange(it)
                 },
                 label = { Text("Password") },
                 placeholder = { Text("Your account password") },
@@ -159,7 +154,7 @@ fun Register() {
         ) {
             Button(
                 onClick = {},
-                enabled = submitButtonAvailable,
+                enabled = isSubmitEnabled,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Create Account")
@@ -168,10 +163,66 @@ fun Register() {
     }
 }
 
+@Composable
+private fun RegisterState() {
+    var firstName by rememberSaveable { mutableStateOf("") }
+    var firstNameError by rememberSaveable { mutableStateOf(false) }
+
+    var lastName by rememberSaveable { mutableStateOf("") }
+    var lastNameError by rememberSaveable { mutableStateOf(false) }
+
+    var username by rememberSaveable { mutableStateOf("") }
+    var usernameError by rememberSaveable { mutableStateOf(false) }
+
+    var email by rememberSaveable { mutableStateOf("") }
+    var emailError by rememberSaveable { mutableStateOf(false) }
+
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordError by rememberSaveable { mutableStateOf(false) }
+
+    val isSubmitEnabled = firstName.isNotEmpty() && lastName.isNotEmpty() &&
+            username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()
+            && !firstNameError && !lastNameError && !usernameError && !emailError && !passwordError
+
+    RegisterScreen(
+        firstName = firstName,
+        onFirstNameChange = {
+            firstName = it
+            firstNameError = !Validation.isValidName(it)
+        },
+        firstNameError = firstNameError,
+        lastName = lastName,
+        onLastNameChange = {
+            lastName = it
+            lastNameError = !Validation.isValidName(it)
+        },
+        lastNameError = lastNameError,
+        username = username,
+        onUsernameChange = {
+            username = it
+            usernameError = !Validation.isValidUsername(it)
+        },
+        usernameError = usernameError,
+        email = email,
+        onEmailChange = {
+            email = it
+            emailError = !Validation.isValidEmail(it)
+        },
+        emailError = emailError,
+        password = password,
+        onPasswordChange = {
+            password = it
+            passwordError = !Validation.isValidPassword(it)
+        },
+        passwordError = passwordError,
+        isSubmitEnabled = isSubmitEnabled
+    )
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PreviewRegister() {
     PomodoroTheme {
-        Register()
+        RegisterState()
     }
 }
