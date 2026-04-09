@@ -12,8 +12,10 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -120,8 +122,8 @@ private fun Login() {
     var password by rememberSaveable { mutableStateOf("") }
     var passwordError by rememberSaveable {mutableStateOf(false)}
 
-    val isSubmitEnabled = username.isNotEmpty() && password.isNotEmpty() &&
-            !usernameError && !passwordError
+    val isSubmitEnabled by remember { derivedStateOf { username.isNotEmpty() && password.isNotEmpty() &&
+            !usernameError && !passwordError } }
 
 
     LoginScreen(

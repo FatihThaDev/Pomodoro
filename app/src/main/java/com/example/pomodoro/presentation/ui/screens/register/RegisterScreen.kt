@@ -11,8 +11,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,19 +32,19 @@ import com.example.pomodoro.presentation.ui.util.Validation
 @Composable
 fun RegisterScreen(
     firstName: String,
-    onFirstNameChange: (String) -> Unit,
+    firstNameChange: (String) -> Unit,
     firstNameError: Boolean,
     lastName: String,
-    onLastNameChange: (String) -> Unit,
+    lastNameChange: (String) -> Unit,
     lastNameError: Boolean,
     username: String,
-    onUsernameChange: (String) -> Unit,
+    usernameChange: (String) -> Unit,
     usernameError: Boolean,
     email: String,
-    onEmailChange: (String) -> Unit,
+    emailChange: (String) -> Unit,
     emailError: Boolean,
     password: String,
-    onPasswordChange: (String) -> Unit,
+    passwordChange: (String) -> Unit,
     passwordError: Boolean,
     isSubmitEnabled: Boolean
 )
@@ -65,7 +67,7 @@ fun RegisterScreen(
             TextField(
                 value = firstName,
                 onValueChange = {
-                    onFirstNameChange(it)
+                    firstNameChange(it)
                 },
                 label = { Text("First Name") },
                 placeholder = { Text("John") },
@@ -80,7 +82,7 @@ fun RegisterScreen(
             TextField(
                 value = lastName,
                 onValueChange = {
-                    onLastNameChange(it)
+                    lastNameChange(it)
                 },
                 label = { Text("Last Name") },
                 placeholder = { Text("Doe") },
@@ -95,7 +97,7 @@ fun RegisterScreen(
             TextField(
                 value = username,
                 onValueChange = {
-                    onUsernameChange(it)
+                    usernameChange(it)
                 },
                 label = { Text("Username") },
                 placeholder = { Text("JohnD67") },
@@ -110,7 +112,7 @@ fun RegisterScreen(
             TextField(
                 value = email,
                 onValueChange = {
-                    onEmailChange(it)
+                    emailChange(it)
                 },
                 label = { Text("Email") },
                 placeholder = { Text("Your account email") },
@@ -128,7 +130,7 @@ fun RegisterScreen(
             TextField(
                 value = password,
                 onValueChange = {
-                    onPasswordChange(it)
+                    passwordChange(it)
                 },
                 label = { Text("Password") },
                 placeholder = { Text("Your account password") },
@@ -180,37 +182,37 @@ private fun RegisterState() {
     var password by rememberSaveable { mutableStateOf("") }
     var passwordError by rememberSaveable { mutableStateOf(false) }
 
-    val isSubmitEnabled = firstName.isNotEmpty() && lastName.isNotEmpty() &&
+    val isSubmitEnabled by remember { derivedStateOf {firstName.isNotEmpty() && lastName.isNotEmpty() &&
             username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()
-            && !firstNameError && !lastNameError && !usernameError && !emailError && !passwordError
+            && !firstNameError && !lastNameError && !usernameError && !emailError && !passwordError} }
 
     RegisterScreen(
         firstName = firstName,
-        onFirstNameChange = {
+        firstNameChange = {
             firstName = it
             firstNameError = !Validation.isValidName(it)
         },
         firstNameError = firstNameError,
         lastName = lastName,
-        onLastNameChange = {
+        lastNameChange = {
             lastName = it
             lastNameError = !Validation.isValidName(it)
         },
         lastNameError = lastNameError,
         username = username,
-        onUsernameChange = {
+        usernameChange = {
             username = it
             usernameError = !Validation.isValidUsername(it)
         },
         usernameError = usernameError,
         email = email,
-        onEmailChange = {
+        emailChange = {
             email = it
             emailError = !Validation.isValidEmail(it)
         },
         emailError = emailError,
         password = password,
-        onPasswordChange = {
+        passwordChange = {
             password = it
             passwordError = !Validation.isValidPassword(it)
         },

@@ -12,10 +12,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -26,16 +27,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pomodoro.presentation.theme.PomodoroTheme
+import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.InfoRow
-import kotlinx.coroutines.delay
 
 @Composable
-fun DashboardScreen() {
-
-    var minutes by rememberSaveable { mutableIntStateOf(25) }
-    var seconds by rememberSaveable { mutableIntStateOf(0) }
-    var isRunning by rememberSaveable { mutableStateOf(false) }
+fun DashboardScreen(
+    minutes: Int,
+    seconds: Int,
+    isRunning: Boolean,
+    isTimerFinished: Boolean,
+    pauseTimer: () -> Unit,
+    resetTimer: () -> Unit,
+) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -68,23 +72,30 @@ fun DashboardScreen() {
                 Button(onClick = {}) {
                     Text("Start")
                 }
-                OutlinedButton(onClick = { isRunning = false }) {
+                OutlinedButton(onClick = { pauseTimer() }) {
                     Text("Pause")
                 }
-                OutlinedButton(onClick = {
-                    minutes = 25
-                    seconds = 0
-                    isRunning = false
-                }) {
+                OutlinedButton(onClick = { resetTimer() }) {
                     Text("Reset")
                 }
+            }
+        }
+
+        if(isTimerFinished) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text("Timer has finished!", color = Color.Red)
             }
         }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 48.dp),
+                .padding(top = if(!isTimerFinished) 48.dp else 30.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
@@ -103,6 +114,28 @@ fun DashboardScreen() {
     }
 }
 
+@Composable
+fun Dashboard() {
+    var minutes by rememberSaveable { mutableIntStateOf(25) }
+    var seconds by rememberSaveable { mutableIntStateOf(0) }
+
+    var isRunning by rememberSaveable { mutableStateOf(false) }
+    val isTimerFinished by remember { derivedStateOf { minutes == 0 && seconds == 0 } }
+
+    DashboardScreen(
+        minutes = minutes,
+        seconds = seconds,
+        isRunning = isRunning,
+        isTimerFinished = isTimerFinished,
+        pauseTimer = { isRunning = false },
+        resetTimer = {
+            minutes = 25
+            seconds = 0
+            isRunning = false
+        }
+    )
+}
+
 private fun formatTime(time: Int): String {
     return if (time < 10) {
         "0${time}"
@@ -115,6 +148,6 @@ private fun formatTime(time: Int): String {
 @Composable
 fun PreviewDashboard() {
     PomodoroTheme {
-        DashboardScreen()
+        Dashboard()
     }
 }
