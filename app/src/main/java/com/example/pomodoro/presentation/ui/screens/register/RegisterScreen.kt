@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -49,124 +50,129 @@ fun RegisterScreen(
     isSubmitEnabled: Boolean
 )
 {
-    Column(
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .background(color = Color(0x50AA5077))
             .fillMaxSize()
             .padding(vertical = 35.dp, horizontal = 20.dp)
     ) {
-        HeadingText("Create Account")
+        item {
+            HeadingText("Create Account")
+        }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            TextField(
-                value = firstName,
-                onValueChange = {
-                    firstNameChange(it)
-                },
-                label = { Text("First Name") },
-                placeholder = { Text("John") },
-                isError = firstNameError,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
-            if (firstNameError) {
-                Text("First name must be at least 2 characters", color = Color.Red)
-            }
-
-            TextField(
-                value = lastName,
-                onValueChange = {
-                    lastNameChange(it)
-                },
-                label = { Text("Last Name") },
-                placeholder = { Text("Doe") },
-                isError = lastNameError,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
-            if (lastNameError) {
-                Text("Last name must be at least 2 characters", color = Color.Red)
-            }
-
-            TextField(
-                value = username,
-                onValueChange = {
-                    usernameChange(it)
-                },
-                label = { Text("Username") },
-                placeholder = { Text("JohnD67") },
-                isError = usernameError,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
-            if (usernameError) {
-                Text("Username must be at least 3 characters", color = Color.Red)
-            }
-
-            TextField(
-                value = email,
-                onValueChange = {
-                    emailChange(it)
-                },
-                label = { Text("Email") },
-                placeholder = { Text("Your account email") },
-                isError = emailError,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
-                    imeAction = ImeAction.Next
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                TextField(
+                    value = firstName,
+                    onValueChange = {
+                        firstNameChange(it)
+                    },
+                    label = { Text("First Name") },
+                    placeholder = { Text("John") },
+                    isError = firstNameError,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
-            )
-            if (emailError) {
-                Text("Invalid email address", color = Color.Red)
-            }
+                if (firstNameError) {
+                    Text("First name must be at least 2 characters", color = Color.Red)
+                }
 
-            TextField(
-                value = password,
-                onValueChange = {
-                    passwordChange(it)
-                },
-                label = { Text("Password") },
-                placeholder = { Text("Your account password") },
-                isError = passwordError,
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
+                TextField(
+                    value = lastName,
+                    onValueChange = {
+                        lastNameChange(it)
+                    },
+                    label = { Text("Last Name") },
+                    placeholder = { Text("Doe") },
+                    isError = lastNameError,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
-            )
-            if (passwordError) {
-                Text("Password must be at least 6 characters", color = Color.Red)
+                if (lastNameError) {
+                    Text("Last name must be at least 2 characters", color = Color.Red)
+                }
+
+                TextField(
+                    value = username,
+                    onValueChange = {
+                        usernameChange(it)
+                    },
+                    label = { Text("Username") },
+                    placeholder = { Text("JohnD67") },
+                    isError = usernameError,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
+                )
+                if (usernameError) {
+                    Text("Username must be at least 3 characters", color = Color.Red)
+                }
+
+                TextField(
+                    value = email,
+                    onValueChange = {
+                        emailChange(it)
+                    },
+                    label = { Text("Email") },
+                    placeholder = { Text("Your account email") },
+                    isError = emailError,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Email,
+                        imeAction = ImeAction.Next
+                    )
+                )
+                if (emailError) {
+                    Text("Invalid email address", color = Color.Red)
+                }
+
+                TextField(
+                    value = password,
+                    onValueChange = {
+                        passwordChange(it)
+                    },
+                    label = { Text("Password") },
+                    placeholder = { Text("Your account password") },
+                    isError = passwordError,
+                    modifier = Modifier.fillMaxWidth(),
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    )
+                )
+                if (passwordError) {
+                    Text("Password must be at least 6 characters", color = Color.Red)
+                }
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(
-                onClick = {},
-                enabled = isSubmitEnabled,
-                modifier = Modifier.fillMaxWidth()
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Create Account")
+                Button(
+                    onClick = {},
+                    enabled = isSubmitEnabled,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Create Account")
+                }
             }
         }
     }
 }
 
 @Composable
-private fun RegisterState() {
+private fun Register() {
     var firstName by rememberSaveable { mutableStateOf("") }
     var firstNameError by rememberSaveable { mutableStateOf(false) }
 
@@ -223,8 +229,8 @@ private fun RegisterState() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewRegister() {
+private fun PreviewRegister() {
     PomodoroTheme {
-        RegisterState()
+        Register()
     }
 }

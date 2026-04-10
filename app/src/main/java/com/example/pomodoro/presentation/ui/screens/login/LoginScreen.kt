@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
@@ -41,74 +42,80 @@ fun LoginScreen(
     isSubmitEnabled: Boolean
 ) {
 
-    Column(
+    LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .background(color = Color(0x50AA5077))
             .fillMaxSize()
             .padding(vertical = 35.dp, horizontal = 20.dp)
     ) {
-        HeadingText("Log In")
+        item {
+            HeadingText("Log In")
+        }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            TextField(
-                value = username,
-                onValueChange = {
-                    usernameChange(it)
-                },
-                label = { Text("Username") },
-                placeholder = { Text("JohnD67") },
-                isError = usernameError,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
-            )
-            if (usernameError) {
-                Text("Username must be at least 3 characters", color = Color.Red)
-            }
-
-            TextField(
-                value = password,
-                onValueChange = {
-                    passwordChange(it)
-                },
-                label = { Text("Password") },
-                placeholder = { Text("Supersecurepass123") },
-                isError = passwordError,
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Done
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                TextField(
+                    value = username,
+                    onValueChange = {
+                        usernameChange(it)
+                    },
+                    label = { Text("Username") },
+                    placeholder = { Text("JohnD67") },
+                    isError = usernameError,
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
                 )
-            )
-            if (passwordError) {
-                Text("Password must be at least 6 characters", color = Color.Red)
+                if (usernameError) {
+                    Text("Username must be at least 3 characters", color = Color.Red)
+                }
+
+                TextField(
+                    value = password,
+                    onValueChange = {
+                        passwordChange(it)
+                    },
+                    label = { Text("Password") },
+                    placeholder = { Text("Supersecurepass123") },
+                    isError = passwordError,
+                    modifier = Modifier.fillMaxWidth(),
+                    visualTransformation = PasswordVisualTransformation(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    )
+                )
+                if (passwordError) {
+                    Text("Password must be at least 6 characters", color = Color.Red)
+                }
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Button(
-                onClick = {},
-                enabled = isSubmitEnabled,
-                modifier = Modifier.fillMaxWidth()
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                Text("Log In")
-            }
-            OutlinedButton(
-                onClick = {},
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Forgot Password?")
+                Button(
+                    onClick = {},
+                    enabled = isSubmitEnabled,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Log In")
+                }
+                OutlinedButton(
+                    onClick = {},
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Forgot Password?")
+                }
             }
         }
     }
@@ -145,7 +152,7 @@ private fun Login() {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewLogin() {
+private fun PreviewLogin() {
     PomodoroTheme {
         Login()
     }

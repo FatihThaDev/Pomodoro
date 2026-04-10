@@ -3,10 +3,10 @@ package com.example.pomodoro.presentation.ui.screens.dashboard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -27,7 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pomodoro.presentation.theme.PomodoroTheme
-import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.InfoRow
 
@@ -63,32 +62,40 @@ fun DashboardScreen(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Row(
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 22.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
             ) {
-                Button(onClick = {}) {
-                    Text("Start")
+                item {
+                    Button(onClick = {}) {
+                        Text("Start")
+                    }
                 }
-                OutlinedButton(onClick = { pauseTimer() }) {
-                    Text("Pause")
+                item {
+                    OutlinedButton(onClick = { pauseTimer() }) {
+                        Text("Pause")
+                    }
                 }
-                OutlinedButton(onClick = { resetTimer() }) {
-                    Text("Reset")
+                item {
+                    OutlinedButton(onClick = { resetTimer() }) {
+                        Text("Reset")
+                    }
                 }
             }
         }
 
         if(isTimerFinished) {
-            Row(
+            LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 30.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text("Timer has finished!", color = Color.Red)
+                item {
+                    Text("Timer has finished!", color = Color.Red)
+                }
             }
         }
 
@@ -129,7 +136,7 @@ fun Dashboard() {
         isTimerFinished = isTimerFinished,
         pauseTimer = { isRunning = false },
         resetTimer = {
-            minutes = 25
+            minutes = 0
             seconds = 0
             isRunning = false
         }
@@ -146,7 +153,7 @@ private fun formatTime(time: Int): String {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewDashboard() {
+private fun PreviewDashboard() {
     PomodoroTheme {
         Dashboard()
     }

@@ -19,7 +19,7 @@ fun BodyText(
         text = content,
         color = MaterialTheme.colorScheme.secondary,
         fontWeight = Bold,
-        fontSize = 18.sp,
+        fontSize = 19.sp,
         textAlign = TextAlign.Center
     )
 }

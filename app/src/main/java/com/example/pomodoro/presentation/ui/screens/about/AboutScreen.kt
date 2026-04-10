@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Info
@@ -36,23 +37,28 @@ fun About() {
                 "work into focused intervals to boost productivity " +
                 "and reduce burnout")
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 40.dp),
-            horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            InfoRow(icon = Icons.Default.Person, label = "Developer", value = "FatihTheDev")
-            InfoRow(icon = Icons.Default.Info, label = "Version", value = "1.0.0")
-            InfoRow(icon = Icons.Default.Build, label = "License", value = "MIT")
+            item {
+                InfoRow(icon = Icons.Default.Person, label = "Developer", value = "FatihTheDev")
+            }
+            item {
+                InfoRow(icon = Icons.Default.Info, label = "Version", value = "1.0.0")
+            }
+            item {
+                InfoRow(icon = Icons.Default.Build, label = "License", value = "MIT")
+            }
         }
     }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PreviewAbout() {
+private fun PreviewAbout() {
     PomodoroTheme {
         About()
     }
