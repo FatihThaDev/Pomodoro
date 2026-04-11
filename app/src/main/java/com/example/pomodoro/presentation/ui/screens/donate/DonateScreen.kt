@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
-import com.example.pomodoro.presentation.ui.components.InfoRow
+import com.example.pomodoro.presentation.ui.components.ListItem
 
 @Composable
 fun Donate() {
@@ -46,9 +46,9 @@ fun Donate() {
                 .padding(vertical = 40.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-                InfoRow(icon = Icons.Default.Email, label = "PayPal", value = "paypal@example.com")
-                InfoRow(icon = Icons.Default.Face, label = "Bitcoin", value = "1A2B3C4D5E6F")
-                InfoRow(icon = Icons.Default.Favorite, label = "Patreon", value = "patreon.com/FatihTheDev")
+                ListItem(icon = Icons.Default.Email, label = "PayPal", value = "paypal@example.com")
+                ListItem(icon = Icons.Default.Face, label = "Bitcoin", value = "1A2B3C4D5E6F")
+                ListItem(icon = Icons.Default.Favorite, label = "Patreon", value = "patreon.com/FatihTheDev")
         }
 
         BodyText("Donate to a charity of your choice:")
@@ -60,17 +60,17 @@ fun Donate() {
                 .background(Color.LightGray, shape = RoundedCornerShape(CornerSize(20.dp)))
         ) {
             item {
-                InfoRow(icon = Icons.TwoTone.CheckCircle, label = "Red Cross", value = "For emergency assistance")
+                ListItem(icon = Icons.TwoTone.CheckCircle, label = "Red Cross", value = "For emergency assistance")
 
             }
             item {
-                InfoRow(icon = Icons.TwoTone.Favorite, label = "Oxfam", value = "For inequality and political repression")
+                ListItem(icon = Icons.TwoTone.Favorite, label = "Oxfam", value = "For inequality and political repression")
             }
             item {
-                InfoRow(icon = Icons.TwoTone.Call, label = "UNICEF", value = "For disaster relief and emergency aid")
+                ListItem(icon = Icons.TwoTone.Call, label = "UNICEF", value = "For disaster relief and emergency aid")
             }
             item {
-                InfoRow(icon = Icons.TwoTone.Place, label = "Core", value = "For disaster relief")
+                ListItem(icon = Icons.TwoTone.Place, label = "Core", value = "For disaster relief")
             }
         }
     }

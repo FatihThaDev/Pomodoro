@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun InfoRow(
+fun ListItem(
     icon: ImageVector? = null,
     label: String,
     value: String
@@ -42,7 +42,7 @@ fun InfoRow(
                 Text(
                     text = label,
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 17.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -58,6 +58,6 @@ fun InfoRow(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewInfoRow() {
-    InfoRow(icon = null, label = "This is a label", value = "This is a value")
+fun PreviewListItem() {
+    ListItem(icon = null, label = "This is a label", value = "This is a value")
 }
