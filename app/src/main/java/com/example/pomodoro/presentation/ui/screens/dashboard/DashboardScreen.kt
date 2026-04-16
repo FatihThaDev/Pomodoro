@@ -37,7 +37,8 @@ import com.example.pomodoro.presentation.ui.components.ListItem
 import com.example.pomodoro.presentation.ui.screens.dashboard.util.SessionData
 
 @Composable
-fun DashboardScreen(
+private fun DashboardScreen(
+    username: String,
     minutes: Int,
     seconds: Int,
     isRunning: Boolean,
@@ -56,6 +57,9 @@ fun DashboardScreen(
     ) {
         item {
             HeadingText("Pomodoro Timer")
+        }
+        item {
+            BodyText("Welcome, $username!")
         }
         item {
             Column(
@@ -141,7 +145,7 @@ fun DashboardScreen(
 }
 
 @Composable
-fun Dashboard() {
+fun Dashboard(username: String) {
     var minutes by rememberSaveable { mutableIntStateOf(25) }
     var seconds by rememberSaveable { mutableIntStateOf(0) }
 
@@ -151,6 +155,7 @@ fun Dashboard() {
     val isTimerFinished by remember { derivedStateOf { minutes == 0 && seconds == 0 } }
 
     DashboardScreen(
+        username = username,
         minutes = minutes,
         seconds = seconds,
         isRunning = isRunning,
@@ -177,6 +182,6 @@ private fun formatTime(time: Int): String {
 @Composable
 private fun PreviewDashboard() {
     PomodoroTheme {
-        Dashboard()
+        Dashboard("guest")
     }
 }

@@ -32,14 +32,15 @@ import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.util.Validation
 
 @Composable
-fun LoginScreen(
+private fun LoginScreen(
     username: String,
     password: String,
     usernameError: Boolean,
     passwordError: Boolean,
     usernameChange: (String) -> Unit,
     passwordChange: (String) -> Unit,
-    isSubmitEnabled: Boolean
+    isSubmitEnabled: Boolean,
+    onLoginSuccess: (String) -> Unit
 ) {
 
     LazyColumn(
@@ -104,7 +105,7 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 Button(
-                    onClick = {},
+                    onClick = { onLoginSuccess(username) },
                     enabled = isSubmitEnabled,
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -122,7 +123,7 @@ fun LoginScreen(
 }
 
 @Composable
-private fun Login() {
+fun Login(onLoginSuccess: (String) -> Unit) {
     var username by rememberSaveable { mutableStateOf("") }
     var usernameError by rememberSaveable {mutableStateOf(false)}
 
@@ -139,6 +140,7 @@ private fun Login() {
         usernameError = usernameError,
         passwordError = passwordError,
         isSubmitEnabled = isSubmitEnabled,
+        onLoginSuccess = onLoginSuccess,
         usernameChange = {
             username = it
             usernameError = !Validation.isValidUsername(it)
@@ -154,6 +156,6 @@ private fun Login() {
 @Composable
 private fun PreviewLogin() {
     PomodoroTheme {
-        Login()
+        Login { _ -> }
     }
 }

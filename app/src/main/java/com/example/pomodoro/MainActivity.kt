@@ -4,24 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.pomodoro.presentation.theme.PomodoroTheme
-import com.example.pomodoro.presentation.ui.components.Card
-import com.example.pomodoro.presentation.ui.components.HeadingText
+import com.example.pomodoro.presentation.navigation.Screen
+import com.example.pomodoro.presentation.ui.screens.about.About
+import com.example.pomodoro.presentation.ui.screens.about.ProjectDetailsScreen
+import com.example.pomodoro.presentation.ui.screens.dashboard.Dashboard
+import com.example.pomodoro.presentation.ui.screens.donate.Donate
+import com.example.pomodoro.presentation.ui.screens.login.Login
+import com.example.pomodoro.presentation.ui.screens.register.Register
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,56 +30,79 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PomodoroTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                    ItemsList()
-
-                }
+                PomodoroApp()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier.background(Color.Red)
-    )
-}
+fun PomodoroApp() {
+    val navController = rememberNavController()
 
-@Composable
-fun ItemsList() {
-    Card(modifier = Modifier.size(100.dp)) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        for (i in 1..5) {
-            Text(
-                text = " - List Item $i",
-                color = MaterialTheme.colorScheme.primary
-            )
+    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Dashboard.route,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(
+                route = Screen.Dashboard.route,
+                arguments = listOf(
+                    navArgument("username") {
+                        type = NavType.StringType
+                        defaultValue = "Guest"
+                    }
+                )
+            ) { backStackEntry ->
+                val username = backStackEntry.arguments?.getString("username") ?: "Guest"
+                Dashboard(username = username)
+            }
+            composable(Screen.About.route) {
+                About(
+                    onProjectClick = { label, description ->
+                        navController.navigate(Screen.ProjectDetails.createRoute(label, description))
+                    }
+                )
+            }
+            composable(Screen.Donate.route) {
+                Donate()
+            }
+            composable(Screen.Login.route) {
+                Login(
+                    onLoginSuccess = { username ->
+                        navController.navigate(Screen.Dashboard.createRoute(username)) {
+                            popUpTo(Screen.Login.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable(Screen.Register.route) {
+                Register(
+                    onRegisterSuccess = { username ->
+                        navController.navigate(Screen.Dashboard.createRoute(username)) {
+                            popUpTo(Screen.Register.route) { inclusive = true }
+                        }
+                    }
+                )
+            }
+            composable(
+                route = Screen.ProjectDetails.route,
+                arguments = listOf(
+                    navArgument("label") { type = NavType.StringType },
+                    navArgument("description") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val label = backStackEntry.arguments?.getString("label") ?: ""
+                val description = backStackEntry.arguments?.getString("description") ?: ""
+                ProjectDetailsScreen(label = label, description = description)
+            }
         }
     }
-    }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun GreetingPreview() {
-    PomodoroTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        )
-        {
-            HeadingText("Welcome to my pomodoro timer")
-            Card("This is heading", "Bla bla bla, this is body text")
-    }
-    }
+private fun PreviewPomodoroApp() {
+    PomodoroApp()
 }

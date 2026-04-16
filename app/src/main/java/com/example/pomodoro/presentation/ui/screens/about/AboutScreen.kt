@@ -16,10 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.twotone.AccountCircle
-import androidx.compose.material.icons.twotone.Call
-import androidx.compose.material.icons.twotone.Favorite
-import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,30 +29,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.pomodoro.model.projectsList
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.ListItem
-import com.example.pomodoro.presentation.ui.screens.about.util.Project
 
 @Composable
-fun AboutScreen(
+private fun AboutScreen(
     searchQuery: String,
-    valueChange: (String) -> Unit
+    valueChange: (String) -> Unit,
+    onProjectClick: (String, String) -> Unit
 ) {
     val projects = remember {
-        listOf(
-            Project(icon = Icons.TwoTone.AccountCircle, label = "FatihNvim", value = "Neovim config for power users"),
-            Project(icon = Icons.TwoTone.Favorite, label = "archlinux-install", value = "Arch Linux install script"),
-            Project(icon = Icons.TwoTone.Call, label = "foodify-delivery-app", value = "Next.js + Tailwind food delivery app"),
-            Project(icon = Icons.TwoTone.PlayArrow, label = "Cave-Slayers", value = "2D action game in Python")
-        )
+        projectsList
     }
 
     val filteredProjects = remember(searchQuery) {
         if (searchQuery.isEmpty()) {
             projects
-        } else {
+        }
+        else {
             projects.filter { project ->
                 project.label.contains(searchQuery, ignoreCase = true) ||
                 project.value.contains(searchQuery, ignoreCase = true)
@@ -113,26 +106,34 @@ fun AboutScreen(
                 .background(Color.LightGray, shape = RoundedCornerShape(CornerSize(20.dp)))
         ) {
             items(filteredProjects) { project ->
-                ListItem(icon = project.icon, label = project.label, value = project.value)
+                ListItem(
+                    icon = project.icon,
+                    label = project.label,
+                    value = project.value,
+                    onClick = { onProjectClick(project.label, project.value) }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun About() {
+fun About(onProjectClick: (String, String) -> Unit) {
     var searchQuery by remember { mutableStateOf("") }
 
-    AboutScreen(searchQuery = searchQuery,
+    AboutScreen(
+        searchQuery = searchQuery,
         valueChange = {
             searchQuery = it
-        })
+        },
+        onProjectClick = onProjectClick
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewAbout() {
     PomodoroTheme {
-        About()
+        About { _, _ -> }
     }
 }

@@ -22,11 +22,12 @@ import androidx.compose.ui.unit.sp
 fun ListItem(
     icon: ImageVector? = null,
     label: String,
-    value: String
+    value: String,
+    onClick: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
-        .clickable(onClick = {})
+        .clickable(onClick = { onClick?.invoke() })
             .padding(horizontal = 6.dp, vertical = 3.dp)
     ) {
         if (icon != null) {

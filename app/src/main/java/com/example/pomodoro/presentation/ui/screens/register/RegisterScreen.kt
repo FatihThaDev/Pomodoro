@@ -31,7 +31,7 @@ import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.util.Validation
 
 @Composable
-fun RegisterScreen(
+private fun RegisterScreen(
     firstName: String,
     firstNameChange: (String) -> Unit,
     firstNameError: Boolean,
@@ -47,7 +47,8 @@ fun RegisterScreen(
     password: String,
     passwordChange: (String) -> Unit,
     passwordError: Boolean,
-    isSubmitEnabled: Boolean
+    isSubmitEnabled: Boolean,
+    onRegisterSuccess: (String) -> Unit
 )
 {
     LazyColumn(
@@ -160,7 +161,7 @@ fun RegisterScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(
-                    onClick = {},
+                    onClick = { onRegisterSuccess(username) },
                     enabled = isSubmitEnabled,
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -172,7 +173,7 @@ fun RegisterScreen(
 }
 
 @Composable
-private fun Register() {
+fun Register(onRegisterSuccess: (String) -> Unit) {
     var firstName by rememberSaveable { mutableStateOf("") }
     var firstNameError by rememberSaveable { mutableStateOf(false) }
 
@@ -223,7 +224,8 @@ private fun Register() {
             passwordError = !Validation.isValidPassword(it)
         },
         passwordError = passwordError,
-        isSubmitEnabled = isSubmitEnabled
+        isSubmitEnabled = isSubmitEnabled,
+        onRegisterSuccess = onRegisterSuccess
     )
 }
 
@@ -231,6 +233,6 @@ private fun Register() {
 @Composable
 private fun PreviewRegister() {
     PomodoroTheme {
-        Register()
+        Register{ _ -> }
     }
 }
