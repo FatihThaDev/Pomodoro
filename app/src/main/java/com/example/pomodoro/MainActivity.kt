@@ -6,23 +6,20 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.pomodoro.presentation.theme.PomodoroTheme
+import com.example.pomodoro.presentation.navigation.NavGraph
 import com.example.pomodoro.presentation.navigation.Screen
-import com.example.pomodoro.presentation.ui.screens.about.About
-import com.example.pomodoro.presentation.ui.screens.about.ProjectDetailsScreen
-import com.example.pomodoro.presentation.ui.screens.dashboard.Dashboard
-import com.example.pomodoro.presentation.ui.screens.donate.Donate
-import com.example.pomodoro.presentation.ui.screens.login.Login
-import com.example.pomodoro.presentation.ui.screens.register.Register
+import com.example.pomodoro.presentation.navigation.BottomNavigationBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,68 +33,49 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PomodoroApp() {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
-    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Screen.Dashboard.route,
-            modifier = Modifier.padding(innerPadding)
-        ) {
-            composable(
-                route = Screen.Dashboard.route,
-                arguments = listOf(
-                    navArgument("username") {
-                        type = NavType.StringType
-                        defaultValue = "Guest"
-                    }
-                )
-            ) { backStackEntry ->
-                val username = backStackEntry.arguments?.getString("username") ?: "Guest"
-                Dashboard(username = username)
-            }
-            composable(Screen.About.route) {
-                About(
-                    onProjectClick = { label, description ->
-                        navController.navigate(Screen.ProjectDetails.createRoute(label, description))
-                    }
+    val showBottomBar = currentRoute in listOf(
+        Screen.Dashboard.route,
+        Screen.About.route,
+        Screen.Login.route,
+        Screen.Donate.route
+    )
+
+    val topBarTitle = when (currentRoute) {
+        Screen.Dashboard.route -> "Pomodoro Timer"
+        Screen.About.route -> "About"
+        Screen.Login.route -> "Log In"
+        Screen.Donate.route -> "Donate"
+        else -> ""
+    }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            if (showBottomBar) {
+                TopAppBar(
+                    title = { Text(topBarTitle) }
                 )
             }
-            composable(Screen.Donate.route) {
-                Donate()
-            }
-            composable(Screen.Login.route) {
-                Login(
-                    onLoginSuccess = { username ->
-                        navController.navigate(Screen.Dashboard.createRoute(username)) {
-                            popUpTo(Screen.Login.route) { inclusive = true }
-                        }
-                    }
-                )
-            }
-            composable(Screen.Register.route) {
-                Register(
-                    onRegisterSuccess = { username ->
-                        navController.navigate(Screen.Dashboard.createRoute(username)) {
-                            popUpTo(Screen.Register.route) { inclusive = true }
-                        }
-                    }
-                )
-            }
-            composable(
-                route = Screen.ProjectDetails.route,
-                arguments = listOf(
-                    navArgument("label") { type = NavType.StringType },
-                    navArgument("description") { type = NavType.StringType }
-                )
-            ) { backStackEntry ->
-                val label = backStackEntry.arguments?.getString("label") ?: ""
-                val description = backStackEntry.arguments?.getString("description") ?: ""
-                ProjectDetailsScreen(label = label, description = description)
+        },
+        bottomBar = {
+            if (showBottomBar) {
+                BottomNavigationBar(navController = navController)
             }
         }
+    ) { innerPadding ->
+        NavGraph(
+            navController = navController,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        )
     }
 }
 

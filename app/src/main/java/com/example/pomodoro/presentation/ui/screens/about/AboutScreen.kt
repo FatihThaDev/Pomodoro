@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.pomodoro.model.projectsList
@@ -34,6 +35,7 @@ import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.ListItem
+import com.example.pomodoro.presentation.ui.screens.about.util.filterProjects
 
 @Composable
 private fun AboutScreen(
@@ -41,20 +43,8 @@ private fun AboutScreen(
     valueChange: (String) -> Unit,
     onProjectClick: (String, String) -> Unit
 ) {
-    val projects = remember {
-        projectsList
-    }
-
     val filteredProjects = remember(searchQuery) {
-        if (searchQuery.isEmpty()) {
-            projects
-        }
-        else {
-            projects.filter { project ->
-                project.label.contains(searchQuery, ignoreCase = true) ||
-                project.value.contains(searchQuery, ignoreCase = true)
-            }
-        }
+        filterProjects(projectsList, searchQuery)
     }
 
     Column(
@@ -69,22 +59,26 @@ private fun AboutScreen(
                 "work into focused intervals to boost productivity " +
                 "and reduce burnout")
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 40.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            item {
-                ListItem(icon = Icons.Default.Person, label = "Developer", value = "FatihTheDev")
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 40.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                item {
+                    ListItem(
+                        icon = Icons.Default.Person,
+                        label = "Developer",
+                        value = "FatihTheDev"
+                    )
+                }
+                item {
+                    ListItem(icon = Icons.Default.Info, label = "Version", value = "1.0.0")
+                }
+                item {
+                    ListItem(icon = Icons.Default.Build, label = "License", value = "MIT")
+                }
             }
-            item {
-                ListItem(icon = Icons.Default.Info, label = "Version", value = "1.0.0")
-            }
-            item {
-                ListItem(icon = Icons.Default.Build, label = "License", value = "MIT")
-            }
-        }
 
         BodyText("My Other Projects:")
 
@@ -105,13 +99,26 @@ private fun AboutScreen(
                 .padding(top = 15.dp)
                 .background(Color.LightGray, shape = RoundedCornerShape(CornerSize(20.dp)))
         ) {
-            items(filteredProjects) { project ->
-                ListItem(
-                    icon = project.icon,
-                    label = project.label,
-                    value = project.value,
-                    onClick = { onProjectClick(project.label, project.value) }
-                )
+            if (filteredProjects.isEmpty()) {
+                item {
+                    Text(
+                        text = "No projects with that name found",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 40.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            else {
+                items(filteredProjects) { project ->
+                    ListItem(
+                        icon = project.icon,
+                        label = project.label,
+                        value = project.value,
+                        onClick = { onProjectClick(project.label, project.value) }
+                    )
+                }
             }
         }
     }

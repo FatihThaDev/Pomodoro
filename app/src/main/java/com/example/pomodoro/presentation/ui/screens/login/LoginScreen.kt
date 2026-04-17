@@ -140,7 +140,6 @@ fun Login(onLoginSuccess: (String) -> Unit) {
         usernameError = usernameError,
         passwordError = passwordError,
         isSubmitEnabled = isSubmitEnabled,
-        onLoginSuccess = onLoginSuccess,
         usernameChange = {
             username = it
             usernameError = !Validation.isValidUsername(it)
@@ -148,8 +147,9 @@ fun Login(onLoginSuccess: (String) -> Unit) {
         passwordChange = {
             password = it
             passwordError = !Validation.isValidPassword(it)
-        }
-    )
+        },
+        onLoginSuccess = onLoginSuccess
+        )
 }
 
 @Preview(showBackground = true, showSystemUi = true)
