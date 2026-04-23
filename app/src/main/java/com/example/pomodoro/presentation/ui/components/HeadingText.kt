@@ -13,7 +13,7 @@ import com.example.pomodoro.presentation.theme.PomodoroTheme
 
 @Composable
 fun HeadingText(
-    content: String,
+    content: String
 ) {
     Text(
         text = content,

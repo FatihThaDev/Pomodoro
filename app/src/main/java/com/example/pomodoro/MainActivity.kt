@@ -4,24 +4,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.pomodoro.presentation.theme.PomodoroTheme
-import com.example.pomodoro.presentation.ui.components.Card
-import com.example.pomodoro.presentation.ui.components.HeadingText
+import com.example.pomodoro.presentation.navigation.NavGraph
+import com.example.pomodoro.presentation.navigation.Screen
+import com.example.pomodoro.presentation.navigation.BottomNavigationBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,56 +27,60 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PomodoroTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                    ItemsList()
-
-                }
+                PomodoroApp()
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier.background(Color.Red)
+fun PomodoroApp() {
+    val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val showBottomBar = currentRoute in listOf(
+        Screen.Dashboard.route,
+        Screen.About.route,
+        Screen.Login.route,
+        Screen.Donate.route
     )
-}
 
-@Composable
-fun ItemsList() {
-    Card(modifier = Modifier.size(100.dp)) {
-    Column(
+    val topBarTitle = when (currentRoute) {
+        Screen.Dashboard.route -> "Pomodoro Timer"
+        Screen.About.route -> "About"
+        Screen.Login.route -> "Log In"
+        Screen.Donate.route -> "Donate"
+        else -> ""
+    }
+
+    Scaffold(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        for (i in 1..5) {
-            Text(
-                text = " - List Item $i",
-                color = MaterialTheme.colorScheme.primary
-            )
+        topBar = {
+            if (showBottomBar) {
+                TopAppBar(
+                    title = { Text(topBarTitle) }
+                )
+            }
+        },
+        bottomBar = {
+            if (showBottomBar) {
+                BottomNavigationBar(navController = navController)
+            }
         }
-    }
+    ) { innerPadding ->
+        NavGraph(
+            navController = navController,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        )
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-fun GreetingPreview() {
-    PomodoroTheme {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        )
-        {
-            HeadingText("Welcome to my pomodoro timer")
-            Card("This is heading", "Bla bla bla, this is body text")
-    }
-    }
+private fun PreviewPomodoroApp() {
+    PomodoroApp()
 }
