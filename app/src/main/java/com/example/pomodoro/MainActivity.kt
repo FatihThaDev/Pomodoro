@@ -16,11 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.pomodoro.presentation.theme.PomodoroTheme
+import com.example.pomodoro.presentation.navigation.BottomNavigationBar
 import com.example.pomodoro.presentation.navigation.NavGraph
 import com.example.pomodoro.presentation.navigation.Screen
-import com.example.pomodoro.presentation.navigation.BottomNavigationBar
+import com.example.pomodoro.presentation.theme.PomodoroTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
