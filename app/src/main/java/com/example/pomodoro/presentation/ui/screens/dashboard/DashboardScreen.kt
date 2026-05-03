@@ -34,7 +34,7 @@ import com.example.pomodoro.presentation.ui.screens.dashboard.util.SessionData
 import com.example.pomodoro.presentation.view_model.DashboardViewModel
 
 @Composable
-private fun DashboardScreen(
+internal fun DashboardScreen(
     username: String,
     minutes: Int,
     seconds: Int,
@@ -170,6 +170,15 @@ private fun formatTime(time: Int): String {
 @Composable
 private fun PreviewDashboard() {
     PomodoroTheme {
-        Dashboard("guest")
+        DashboardScreen(
+            username = "guest",
+            minutes = 25,
+            seconds = 0,
+            isRunning = false,
+            isTimerFinished = false,
+            sessionData = SessionData(sessionsCompleted = 0, focusTime = 0, dailySessions = 0, streak = 0),
+            pauseTimer = {},
+            resetTimer = {}
+        )
     }
 }

@@ -13,7 +13,7 @@ import javax.inject.Inject
 sealed class LoginUiState {
     object Init : LoginUiState()
     object Loading : LoginUiState()
-    data class Success(val isLoggedIn: Boolean) : LoginUiState()
+    data class Success(val username: String) : LoginUiState()
     data class Error(val message: String) : LoginUiState()
 }
 
@@ -25,15 +25,11 @@ class LoginViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Init)
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    fun onLoginClick(email: String, password: String) {
+    fun onLoginClick(username: String, password: String) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
-
-            if (authRepository.login(email, password)) {
-                _uiState.value = LoginUiState.Success(isLoggedIn = true)
-            } else {
-                _uiState.value = LoginUiState.Error("Invalid credentials")
-            }
+            authRepository.login(username, password)
+            _uiState.value = LoginUiState.Success(username)
         }
     }
 

@@ -39,7 +39,7 @@ import com.example.pomodoro.presentation.ui.components.ListItem
 import com.example.pomodoro.presentation.ui.screens.about.util.filterProjects
 
 @Composable
-private fun AboutScreen(
+internal fun AboutScreen(
     searchQuery: String,
     valueChange: (String) -> Unit,
     onProjectClick: (String, String) -> Unit
@@ -141,6 +141,10 @@ fun About(onProjectClick: (String, String) -> Unit) {
 @Composable
 private fun PreviewAbout() {
     PomodoroTheme {
-        About { _, _ -> }
+        AboutScreen(
+            searchQuery = "",
+            valueChange = {},
+            onProjectClick = { _, _ -> }
+        )
     }
 }

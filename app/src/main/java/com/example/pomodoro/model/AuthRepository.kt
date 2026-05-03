@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 class AuthRepository @Inject constructor() {
 
-    fun login(email: String, password: String): Boolean {
-        return email == "test@gmail.com" && password == "123456"
+    fun login(username: String, password: String): Boolean {
+        return username == "test@gmail.com" && password == "123456"
     }
 }

@@ -33,7 +33,7 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
     fun resetTimer() {
         _uiState.value = _uiState.value.copy(
-            minutes = 25,
+            minutes = 0,
             seconds = 0,
             isRunning = false,
             isTimerFinished = false
