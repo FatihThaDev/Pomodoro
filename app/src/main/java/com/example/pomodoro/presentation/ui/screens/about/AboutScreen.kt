@@ -20,9 +20,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.pomodoro.presentation.view_model.AboutViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -126,13 +127,12 @@ private fun AboutScreen(
 
 @Composable
 fun About(onProjectClick: (String, String) -> Unit) {
-    var searchQuery by remember { mutableStateOf("") }
+    val viewModel: AboutViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     AboutScreen(
-        searchQuery = searchQuery,
-        valueChange = {
-            searchQuery = it
-        },
+        searchQuery = uiState.searchQuery,
+        valueChange = { viewModel.onSearchQueryChange(it) },
         onProjectClick = onProjectClick
     )
 }

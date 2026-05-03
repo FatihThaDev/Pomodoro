@@ -13,12 +13,15 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.util.Validation
+import com.example.pomodoro.presentation.view_model.auth.LoginUiState
+import com.example.pomodoro.presentation.view_model.auth.LoginViewModel
 
 @Composable
 private fun LoginScreen(
@@ -124,15 +129,25 @@ private fun LoginScreen(
 
 @Composable
 fun Login(onLoginSuccess: (String) -> Unit) {
+    val viewModel: LoginViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     var username by rememberSaveable { mutableStateOf("") }
-    var usernameError by rememberSaveable {mutableStateOf(false)}
+    var usernameError by rememberSaveable { mutableStateOf(false) }
 
     var password by rememberSaveable { mutableStateOf("") }
-    var passwordError by rememberSaveable {mutableStateOf(false)}
+    var passwordError by rememberSaveable { mutableStateOf(false) }
 
     val isSubmitEnabled by remember { derivedStateOf { username.isNotEmpty() && password.isNotEmpty() &&
             !usernameError && !passwordError } }
 
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is LoginUiState.Success -> onLoginSuccess(username)
+            is LoginUiState.Error -> { /* show error */ }
+            else -> Unit
+        }
+    }
 
     LoginScreen(
         username = username,
@@ -148,8 +163,8 @@ fun Login(onLoginSuccess: (String) -> Unit) {
             password = it
             passwordError = !Validation.isValidPassword(it)
         },
-        onLoginSuccess = onLoginSuccess
-        )
+        onLoginSuccess = { viewModel.onLoginClick(username, password) }
+    )
 }
 
 @Preview(showBackground = true, showSystemUi = true)

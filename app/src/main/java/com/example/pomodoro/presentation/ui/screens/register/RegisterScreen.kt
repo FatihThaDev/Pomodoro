@@ -12,12 +12,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.pomodoro.presentation.view_model.auth.RegisterUiState
+import com.example.pomodoro.presentation.view_model.auth.RegisterViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -174,6 +179,9 @@ private fun RegisterScreen(
 
 @Composable
 fun Register(onRegisterSuccess: (String) -> Unit) {
+    val viewModel: RegisterViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     var firstName by rememberSaveable { mutableStateOf("") }
     var firstNameError by rememberSaveable { mutableStateOf(false) }
 
@@ -192,6 +200,14 @@ fun Register(onRegisterSuccess: (String) -> Unit) {
     val isSubmitEnabled by remember { derivedStateOf {firstName.isNotEmpty() && lastName.isNotEmpty() &&
             username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()
             && !firstNameError && !lastNameError && !usernameError && !emailError && !passwordError} }
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is RegisterUiState.Success -> onRegisterSuccess(username)
+            is RegisterUiState.Error -> { /* show error */ }
+            else -> Unit
+        }
+    }
 
     RegisterScreen(
         firstName = firstName,
@@ -225,7 +241,7 @@ fun Register(onRegisterSuccess: (String) -> Unit) {
         },
         passwordError = passwordError,
         isSubmitEnabled = isSubmitEnabled,
-        onRegisterSuccess = onRegisterSuccess
+        onRegisterSuccess = { viewModel.onRegisterClick(email, password) }
     )
 }
 

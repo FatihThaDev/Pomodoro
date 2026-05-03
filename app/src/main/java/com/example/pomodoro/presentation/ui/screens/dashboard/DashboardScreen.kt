@@ -15,13 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +31,7 @@ import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.ListItem
 import com.example.pomodoro.presentation.ui.screens.dashboard.util.SessionData
+import com.example.pomodoro.presentation.view_model.DashboardViewModel
 
 @Composable
 private fun DashboardScreen(
@@ -146,27 +143,18 @@ private fun DashboardScreen(
 
 @Composable
 fun Dashboard(username: String) {
-    var minutes by rememberSaveable { mutableIntStateOf(25) }
-    var seconds by rememberSaveable { mutableIntStateOf(0) }
-
-    var sessionData by remember { mutableStateOf(SessionData()) }
-
-    var isRunning by rememberSaveable { mutableStateOf(false) }
-    val isTimerFinished by remember { derivedStateOf { minutes == 0 && seconds == 0 } }
+    val viewModel: DashboardViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     DashboardScreen(
         username = username,
-        minutes = minutes,
-        seconds = seconds,
-        isRunning = isRunning,
-        isTimerFinished = isTimerFinished,
-        sessionData = sessionData,
-        pauseTimer = { isRunning = false },
-        resetTimer = {
-            minutes = 0
-            seconds = 0
-            isRunning = false
-        }
+        minutes = uiState.minutes,
+        seconds = uiState.seconds,
+        isRunning = uiState.isRunning,
+        isTimerFinished = uiState.isTimerFinished,
+        sessionData = uiState.sessionData,
+        pauseTimer = { viewModel.pauseTimer() },
+        resetTimer = { viewModel.resetTimer() }
     )
 }
 
