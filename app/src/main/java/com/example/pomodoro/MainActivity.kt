@@ -61,6 +61,7 @@ fun PomodoroApp() {
         Screen.Dashboard.route,
         Screen.About.route,
         Screen.Login.route,
+        Screen.Register.route,
         Screen.Donate.route
     )
 
@@ -68,6 +69,7 @@ fun PomodoroApp() {
         Screen.Dashboard.route -> "Pomodoro Timer"
         Screen.About.route -> "About"
         Screen.Login.route -> "Log In"
+        Screen.Register.route -> "Register"
         Screen.Donate.route -> "Donate"
         else -> ""
     }
@@ -102,20 +104,24 @@ fun PomodoroApp() {
 private fun PreviewPomodoroApp() {
     var selectedRoute by remember { mutableStateOf(Screen.Dashboard.route) }
     var dashboardUsername by rememberSaveable { mutableStateOf("Guest") }
+    var selectedProject by remember { mutableStateOf<Pair<String, String>?>(null) }
 
     PomodoroTheme {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                TopAppBar(
-                    title = { Text(when (selectedRoute) {
-                        Screen.Dashboard.route -> "Pomodoro Timer"
-                        Screen.About.route -> "About"
-                        Screen.Login.route -> "Log In"
-                        Screen.Donate.route -> "Donate"
-                        else -> "Pomodoro"
-                    }) }
-                )
+                if (selectedRoute != "projectDetails") {
+                    TopAppBar(
+                        title = { Text(when (selectedRoute) {
+                            Screen.Dashboard.route -> "Pomodoro Timer"
+                            Screen.About.route -> "About"
+                            Screen.Login.route -> "Log In"
+                            Screen.Register.route -> "Register"
+                            Screen.Donate.route -> "Donate"
+                            else -> "Pomodoro"
+                        }) }
+                    )
+                }
             },
             bottomBar = {
                 BottomNavigationBarPreview(
@@ -133,6 +139,7 @@ private fun PreviewPomodoroApp() {
                     isRunning = false,
                     isTimerFinished = false,
                     sessionData = SessionData(),
+                    startTimer = {},
                     pauseTimer = {},
                     resetTimer = {}
                 )
@@ -141,7 +148,17 @@ private fun PreviewPomodoroApp() {
                     AboutScreen(
                         searchQuery = searchQuery,
                         valueChange = { searchQuery = it },
-                        onProjectClick = { _, _ -> }
+                        onProjectClick = { label, desc ->
+                            selectedProject = label to desc
+                            selectedRoute = "projectDetails"
+                        }
+                    )
+                }
+                "projectDetails" -> {
+                    com.example.pomodoro.presentation.ui.screens.about.ProjectDetailsScreen(
+                        label = selectedProject?.first ?: "",
+                        description = selectedProject?.second ?: "",
+                        onBackClick = { selectedRoute = Screen.About.route }
                     )
                 }
                 Screen.Login.route -> {
@@ -175,6 +192,60 @@ private fun PreviewPomodoroApp() {
                         }
                     )
                 }
+                Screen.Register.route -> {
+                    var firstName by rememberSaveable { mutableStateOf("") }
+                    var firstNameError by rememberSaveable { mutableStateOf(false) }
+                    var lastName by rememberSaveable { mutableStateOf("") }
+                    var lastNameError by rememberSaveable { mutableStateOf(false) }
+                    var username by rememberSaveable { mutableStateOf("") }
+                    var usernameError by rememberSaveable { mutableStateOf(false) }
+                    var email by rememberSaveable { mutableStateOf("") }
+                    var emailError by rememberSaveable { mutableStateOf(false) }
+                    var password by rememberSaveable { mutableStateOf("") }
+                    var passwordError by rememberSaveable { mutableStateOf(false) }
+
+                    val isSubmitEnabled = firstName.isNotEmpty() && lastName.isNotEmpty() &&
+                            username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() &&
+                            !firstNameError && !lastNameError && !usernameError && !emailError && !passwordError
+
+                    com.example.pomodoro.presentation.ui.screens.register.RegisterScreen(
+                        firstName = firstName,
+                        firstNameChange = {
+                            firstName = it
+                            firstNameError = !Validation.isValidName(it)
+                        },
+                        firstNameError = firstNameError,
+                        lastName = lastName,
+                        lastNameChange = {
+                            lastName = it
+                            lastNameError = !Validation.isValidName(it)
+                        },
+                        lastNameError = lastNameError,
+                        username = username,
+                        usernameChange = {
+                            username = it
+                            usernameError = !Validation.isValidUsername(it)
+                        },
+                        usernameError = usernameError,
+                        email = email,
+                        emailChange = {
+                            email = it
+                            emailError = !Validation.isValidEmail(it)
+                        },
+                        emailError = emailError,
+                        password = password,
+                        passwordChange = {
+                            password = it
+                            passwordError = !Validation.isValidPassword(it)
+                        },
+                        passwordError = passwordError,
+                        isSubmitEnabled = isSubmitEnabled,
+                        onRegisterClick = {
+                            dashboardUsername = username
+                            selectedRoute = Screen.Dashboard.route
+                        }
+                    )
+                }
                 Screen.Donate.route -> Donate()
                 else -> {}
                 }
@@ -192,6 +263,7 @@ private fun BottomNavigationBarPreview(
         Screen.Dashboard.route to "Dashboard",
         Screen.About.route to "About",
         Screen.Login.route to "Log In",
+        Screen.Register.route to "Register",
         Screen.Donate.route to "Donate"
     )
 

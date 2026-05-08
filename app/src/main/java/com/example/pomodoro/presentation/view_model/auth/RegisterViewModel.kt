@@ -13,7 +13,7 @@ import javax.inject.Inject
 sealed class RegisterUiState {
     object Init : RegisterUiState()
     object Loading : RegisterUiState()
-    data class Success(val isRegistered: Boolean) : RegisterUiState()
+    data class Success(val username: String) : RegisterUiState()
     data class Error(val message: String) : RegisterUiState()
 }
 
@@ -25,12 +25,12 @@ class RegisterViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<RegisterUiState>(RegisterUiState.Init)
     val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
 
-    fun onRegisterClick(email: String, password: String) {
+    fun onRegisterClick(username: String, email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = RegisterUiState.Loading
 
-            if (authRepository.login(email, password)) {
-                _uiState.value = RegisterUiState.Success(isRegistered = true)
+            if (authRepository.register(username, email, password)) {
+                _uiState.value = RegisterUiState.Success(username = username)
             } else {
                 _uiState.value = RegisterUiState.Error("Registration failed")
             }

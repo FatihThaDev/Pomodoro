@@ -1,11 +1,14 @@
 package com.example.pomodoro.presentation.view_model
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.pomodoro.model.DashboardRepository
 import com.example.pomodoro.presentation.ui.screens.dashboard.util.SessionData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class DashboardUiState(
@@ -18,13 +21,19 @@ data class DashboardUiState(
 )
 
 @HiltViewModel
-class DashboardViewModel @Inject constructor() : ViewModel() {
+class DashboardViewModel @Inject constructor(
+    private val dashboardRepository: DashboardRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
     fun startTimer() {
         _uiState.value = _uiState.value.copy(isRunning = true)
+        viewModelScope.launch {
+            val sessionData = dashboardRepository.saveSession(_uiState.value.minutes)
+            _uiState.value = _uiState.value.copy(sessionData = sessionData)
+        }
     }
 
     fun pauseTimer() {
@@ -42,5 +51,15 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
 
     fun setUsername(name: String) {
         _uiState.value = _uiState.value.copy(username = name)
+    }
+
+    fun saveSession() {
+        viewModelScope.launch {
+            val sessionData = dashboardRepository.saveSession(_uiState.value.minutes)
+            _uiState.value = _uiState.value.copy(
+                sessionData = sessionData,
+                isTimerFinished = true
+            )
+        }
     }
 }

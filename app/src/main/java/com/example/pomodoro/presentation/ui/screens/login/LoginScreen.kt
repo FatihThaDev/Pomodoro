@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +31,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.pomodoro.presentation.navigation.Screen
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.util.Validation
+import com.example.pomodoro.presentation.view_model.auth.LoginUiState
 import com.example.pomodoro.presentation.view_model.auth.LoginViewModel
 
 @Composable
@@ -129,6 +134,8 @@ internal fun LoginScreen(
 @Composable
 fun Login(navController: NavController) {
     val viewModel: LoginViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     var username by rememberSaveable { mutableStateOf("") }
     var usernameError by rememberSaveable { mutableStateOf(false) }
@@ -139,27 +146,55 @@ fun Login(navController: NavController) {
     val isSubmitEnabled by remember { derivedStateOf { username.isNotEmpty() && password.isNotEmpty() &&
             !usernameError && !passwordError } }
 
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is LoginUiState.Success -> {
+                navController.navigate(Screen.Dashboard.createRoute((uiState as LoginUiState.Success).username)) {
+                    popUpTo(Screen.Login.route) { inclusive = false }
+                }
+                viewModel.resetUiState()
+            }
+            is LoginUiState.Error -> {
+                errorMessage = (uiState as LoginUiState.Error).message
+            }
+            else -> {}
+        }
+    }
+
     LoginScreen(
         username = username,
         password = password,
         usernameError = usernameError,
         passwordError = passwordError,
-        isSubmitEnabled = isSubmitEnabled,
+        isSubmitEnabled = isSubmitEnabled && uiState !is LoginUiState.Loading,
         usernameChange = {
             username = it
             usernameError = !Validation.isValidUsername(it)
+            errorMessage = null
         },
         passwordChange = {
             password = it
             passwordError = !Validation.isValidPassword(it)
+            errorMessage = null
         },
         onLoginClick = {
+            errorMessage = null
             viewModel.onLoginClick(username, password)
-            navController.navigate(Screen.Dashboard.createRoute(username)) {
-                popUpTo(Screen.Login.route) { inclusive = false }
-            }
         }
     )
+
+    if (errorMessage != null) {
+        AlertDialog(
+            onDismissRequest = { errorMessage = null },
+            title = { Text("Login Failed") },
+            text = { Text(errorMessage!!) },
+            confirmButton = {
+                TextButton(onClick = { errorMessage = null }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)

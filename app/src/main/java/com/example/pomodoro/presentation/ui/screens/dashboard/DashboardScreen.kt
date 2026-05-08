@@ -41,6 +41,7 @@ internal fun DashboardScreen(
     isRunning: Boolean,
     isTimerFinished: Boolean,
     sessionData: SessionData,
+    startTimer: () -> Unit,
     pauseTimer: () -> Unit,
     resetTimer: () -> Unit,
 ) {
@@ -79,7 +80,7 @@ internal fun DashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
                 ) {
                     item {
-                        Button(onClick = {}) {
+                        Button(onClick = { startTimer() }) {
                             Text("Start")
                         }
                     }
@@ -153,6 +154,7 @@ fun Dashboard(username: String) {
         isRunning = uiState.isRunning,
         isTimerFinished = uiState.isTimerFinished,
         sessionData = uiState.sessionData,
+        startTimer = { viewModel.startTimer() },
         pauseTimer = { viewModel.pauseTimer() },
         resetTimer = { viewModel.resetTimer() }
     )
@@ -177,6 +179,7 @@ private fun PreviewDashboard() {
             isRunning = false,
             isTimerFinished = false,
             sessionData = SessionData(sessionsCompleted = 0, focusTime = 0, dailySessions = 0, streak = 0),
+            startTimer = {},
             pauseTimer = {},
             resetTimer = {}
         )

@@ -8,10 +8,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,15 +30,17 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.pomodoro.presentation.navigation.Screen
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.util.Validation
+import com.example.pomodoro.presentation.view_model.auth.RegisterUiState
 import com.example.pomodoro.presentation.view_model.auth.RegisterViewModel
 
 @Composable
-private fun RegisterScreen(
+internal fun RegisterScreen(
     firstName: String,
     firstNameChange: (String) -> Unit,
     firstNameError: Boolean,
@@ -179,6 +184,8 @@ private fun RegisterScreen(
 @Composable
 fun Register(navController: NavController) {
     val viewModel: RegisterViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     var firstName by rememberSaveable { mutableStateOf("") }
     var firstNameError by rememberSaveable { mutableStateOf(false) }
@@ -199,45 +206,76 @@ fun Register(navController: NavController) {
             username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()
             && !firstNameError && !lastNameError && !usernameError && !emailError && !passwordError} }
 
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is RegisterUiState.Success -> {
+                navController.navigate(Screen.Dashboard.createRoute((uiState as RegisterUiState.Success).username)) {
+                    popUpTo(Screen.Register.route) { inclusive = true }
+                }
+                viewModel.resetUiState()
+            }
+            is RegisterUiState.Error -> {
+                errorMessage = (uiState as RegisterUiState.Error).message
+            }
+            else -> {}
+        }
+    }
+
     RegisterScreen(
         firstName = firstName,
         firstNameChange = {
             firstName = it
             firstNameError = !Validation.isValidName(it)
+            errorMessage = null
         },
         firstNameError = firstNameError,
         lastName = lastName,
         lastNameChange = {
             lastName = it
             lastNameError = !Validation.isValidName(it)
+            errorMessage = null
         },
         lastNameError = lastNameError,
         username = username,
         usernameChange = {
             username = it
             usernameError = !Validation.isValidUsername(it)
+            errorMessage = null
         },
         usernameError = usernameError,
         email = email,
         emailChange = {
             email = it
             emailError = !Validation.isValidEmail(it)
+            errorMessage = null
         },
         emailError = emailError,
         password = password,
         passwordChange = {
             password = it
             passwordError = !Validation.isValidPassword(it)
+            errorMessage = null
         },
         passwordError = passwordError,
-        isSubmitEnabled = isSubmitEnabled,
+        isSubmitEnabled = isSubmitEnabled && uiState !is RegisterUiState.Loading,
         onRegisterClick = {
-            viewModel.onRegisterClick(email, password)
-            navController.navigate(Screen.Dashboard.createRoute(username)) {
-                popUpTo(Screen.Register.route) { inclusive = true }
-            }
+            errorMessage = null
+            viewModel.onRegisterClick(username, email, password)
         }
     )
+
+    if (errorMessage != null) {
+        AlertDialog(
+            onDismissRequest = { errorMessage = null },
+            title = { Text("Registration Failed") },
+            text = { Text(errorMessage!!) },
+            confirmButton = {
+                TextButton(onClick = { errorMessage = null }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)

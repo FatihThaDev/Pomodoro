@@ -28,8 +28,13 @@ class LoginViewModel @Inject constructor(
     fun onLoginClick(username: String, password: String) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
-            authRepository.login(username, password)
-            _uiState.value = LoginUiState.Success(username)
+
+            if (authRepository.login(username, password)) {
+                _uiState.value = LoginUiState.Success(username)
+            }
+            else {
+                _uiState.value = LoginUiState.Error("Invalid credentials")
+            }
         }
     }
 

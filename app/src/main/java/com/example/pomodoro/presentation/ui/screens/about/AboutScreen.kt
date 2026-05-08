@@ -42,7 +42,8 @@ import com.example.pomodoro.presentation.ui.screens.about.util.filterProjects
 internal fun AboutScreen(
     searchQuery: String,
     valueChange: (String) -> Unit,
-    onProjectClick: (String, String) -> Unit
+    onProjectClick: (String, String) -> Unit,
+    version: String = "1.0.0"
 ) {
     val filteredProjects = remember(searchQuery) {
         filterProjects(projectsList, searchQuery)
@@ -74,7 +75,7 @@ internal fun AboutScreen(
                     )
                 }
                 item {
-                    ListItem(icon = Icons.Default.Info, label = "Version", value = "1.0.0")
+                    ListItem(icon = Icons.Default.Info, label = "Version", value = version)
                 }
                 item {
                     ListItem(icon = Icons.Default.Build, label = "License", value = "MIT")
@@ -133,7 +134,8 @@ fun About(onProjectClick: (String, String) -> Unit) {
     AboutScreen(
         searchQuery = uiState.searchQuery,
         valueChange = { viewModel.onSearchQueryChange(it) },
-        onProjectClick = onProjectClick
+        onProjectClick = onProjectClick,
+        version = uiState.appVersion
     )
 }
 
