@@ -2,7 +2,8 @@ package com.example.pomodoro.presentation.view_model.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pomodoro.model.AuthRepository
+import com.example.pomodoro.model.di.UserSession
+import com.example.pomodoro.model.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,8 @@ sealed class LoginUiState {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val userRepository: UserRepository,
+    private val userSession: UserSession
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Init)
@@ -28,13 +30,14 @@ class LoginViewModel @Inject constructor(
     fun onLoginClick(username: String, password: String) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
-
-            if (authRepository.login(username, password)) {
-                _uiState.value = LoginUiState.Success(username)
-            }
-            else {
-                _uiState.value = LoginUiState.Error("Invalid credentials")
-            }
+            val result = userRepository.login(username, password)
+            result.fold(
+                onSuccess = { user ->
+                    userSession.currentUserId = user.userId
+                    _uiState.value = LoginUiState.Success(user.username)
+                },
+                onFailure = { _uiState.value = LoginUiState.Error("Invalid credentials") }
+            )
         }
     }
 

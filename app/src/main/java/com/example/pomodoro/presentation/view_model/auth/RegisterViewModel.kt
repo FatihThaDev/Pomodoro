@@ -2,7 +2,8 @@ package com.example.pomodoro.presentation.view_model.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pomodoro.model.AuthRepository
+import com.example.pomodoro.model.di.UserSession
+import com.example.pomodoro.model.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +20,8 @@ sealed class RegisterUiState {
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val userRepository: UserRepository,
+    private val userSession: UserSession
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<RegisterUiState>(RegisterUiState.Init)
@@ -28,12 +30,14 @@ class RegisterViewModel @Inject constructor(
     fun onRegisterClick(username: String, email: String, password: String) {
         viewModelScope.launch {
             _uiState.value = RegisterUiState.Loading
-
-            if (authRepository.register(username, email, password)) {
-                _uiState.value = RegisterUiState.Success(username = username)
-            } else {
-                _uiState.value = RegisterUiState.Error("Registration failed")
-            }
+            val result = userRepository.register(username, email, password)
+            result.fold(
+                onSuccess = { user ->
+                    userSession.currentUserId = user.userId
+                    _uiState.value = RegisterUiState.Success(user.username)
+                },
+                onFailure = { _uiState.value = RegisterUiState.Error(it.message ?: "Registration failed") }
+            )
         }
     }
 

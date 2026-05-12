@@ -31,11 +31,11 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.pomodoro.model.projectsList
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.ListItem
+import com.example.pomodoro.presentation.ui.screens.about.util.Project
 import com.example.pomodoro.presentation.ui.screens.about.util.filterProjects
 
 @Composable
@@ -43,10 +43,11 @@ internal fun AboutScreen(
     searchQuery: String,
     valueChange: (String) -> Unit,
     onProjectClick: (String, String) -> Unit,
-    version: String = "1.0.0"
+    version: String = "1.0.0",
+    projects: List<Project> = emptyList()
 ) {
-    val filteredProjects = remember(searchQuery) {
-        filterProjects(projectsList, searchQuery)
+    val filteredProjects = remember(searchQuery, projects) {
+        filterProjects(projects, searchQuery)
     }
 
     Column(
@@ -130,12 +131,18 @@ internal fun AboutScreen(
 fun About(onProjectClick: (String, String) -> Unit) {
     val viewModel: AboutViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val projectUiModels = remember(uiState.projects) {
+        uiState.projects.map { entity ->
+            Project(icon = null, label = entity.name, value = entity.description)
+        }
+    }
 
     AboutScreen(
         searchQuery = uiState.searchQuery,
         valueChange = { viewModel.onSearchQueryChange(it) },
         onProjectClick = onProjectClick,
-        version = uiState.appVersion
+        version = uiState.appVersion,
+        projects = projectUiModels
     )
 }
 

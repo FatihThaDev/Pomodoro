@@ -2,7 +2,8 @@ package com.example.pomodoro.presentation.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pomodoro.model.DashboardRepository
+import com.example.pomodoro.model.di.UserSession
+import com.example.pomodoro.model.repository.SessionRepository
 import com.example.pomodoro.presentation.ui.screens.dashboard.util.SessionData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,8 @@ data class DashboardUiState(
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val dashboardRepository: DashboardRepository
+    private val sessionRepository: SessionRepository,
+    private val userSession: UserSession
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -31,8 +33,8 @@ class DashboardViewModel @Inject constructor(
     fun startTimer() {
         _uiState.value = _uiState.value.copy(isRunning = true)
         viewModelScope.launch {
-            val sessionData = dashboardRepository.saveSession(_uiState.value.minutes)
-            _uiState.value = _uiState.value.copy(sessionData = sessionData)
+            sessionRepository.createSession(userId = userSession.currentUserId, focusMinutes = _uiState.value.minutes)
+            loadSessionData()
         }
     }
 
@@ -53,13 +55,16 @@ class DashboardViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(username = name)
     }
 
-    fun saveSession() {
-        viewModelScope.launch {
-            val sessionData = dashboardRepository.saveSession(_uiState.value.minutes)
-            _uiState.value = _uiState.value.copy(
-                sessionData = sessionData,
-                isTimerFinished = true
+    private suspend fun loadSessionData() {
+        val sessions = sessionRepository.getSessionsByUserId(userSession.currentUserId)
+        val totalFocusSeconds = sessions.sumOf { it.focusMinutes * 60 }
+        _uiState.value = _uiState.value.copy(
+            sessionData = SessionData(
+                sessionsCompleted = sessions.size,
+                focusTime = totalFocusSeconds,
+                dailySessions = sessions.size,
+                streak = sessions.size
             )
-        }
+        )
     }
 }
