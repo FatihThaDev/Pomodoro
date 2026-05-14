@@ -28,7 +28,7 @@ import com.example.pomodoro.presentation.navigation.BottomNavigationBar
 import com.example.pomodoro.presentation.navigation.NavGraph
 import com.example.pomodoro.presentation.navigation.Screen
 import com.example.pomodoro.presentation.theme.PomodoroTheme
-import com.example.pomodoro.presentation.ui.screens.about.AboutScreen
+import com.example.pomodoro.presentation.ui.screens.about.About
 import com.example.pomodoro.presentation.ui.screens.dashboard.DashboardScreen
 import com.example.pomodoro.presentation.ui.screens.dashboard.util.SessionData
 import com.example.pomodoro.presentation.ui.screens.donate.Donate
@@ -144,15 +144,13 @@ private fun PreviewPomodoroApp() {
                     resetTimer = {}
                 )
                 Screen.About.route -> {
-                    var searchQuery by remember { mutableStateOf("") }
-                    AboutScreen(
-                        searchQuery = searchQuery,
-                        valueChange = { searchQuery = it },
+                    About(
                         onProjectClick = { label, desc ->
                             selectedProject = label to desc
                             selectedRoute = "projectDetails"
                         }
                     )
+
                 }
                 "projectDetails" -> {
                     com.example.pomodoro.presentation.ui.screens.about.ProjectDetailsScreen(

@@ -133,7 +133,6 @@ internal fun DashboardScreen(
                     BodyText("You didn't run any sessions yet - Start your first timer to show session data")
                 } else {
                     ListItem(label = "Sessions Completed", value = "${sessionData.sessionsCompleted}")
-                    ListItem(label = "Total Focus Time", value = "${sessionData.focusTime}s")
                     ListItem(label = "Today's Sessions", value = "${sessionData.dailySessions}")
                     ListItem(label = "Current Streak", value = "${sessionData.streak} days")
                 }
@@ -178,7 +177,7 @@ private fun PreviewDashboard() {
             seconds = 0,
             isRunning = false,
             isTimerFinished = false,
-            sessionData = SessionData(sessionsCompleted = 0, focusTime = 0, dailySessions = 0, streak = 0),
+            sessionData = SessionData(sessionsCompleted = 0, dailySessions = 0, streak = 0),
             startTimer = {},
             pauseTimer = {},
             resetTimer = {}

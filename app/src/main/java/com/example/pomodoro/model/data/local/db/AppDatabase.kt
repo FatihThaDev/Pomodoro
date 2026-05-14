@@ -21,7 +21,7 @@ import com.example.pomodoro.model.data.local.entity.UserEntity
         DonationEntity::class,
         SessionProjectCrossRef::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

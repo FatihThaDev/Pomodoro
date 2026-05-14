@@ -57,11 +57,9 @@ class DashboardViewModel @Inject constructor(
 
     private suspend fun loadSessionData() {
         val sessions = sessionRepository.getSessionsByUserId(userSession.currentUserId)
-        val totalFocusSeconds = sessions.sumOf { it.focusMinutes * 60 }
         _uiState.value = _uiState.value.copy(
             sessionData = SessionData(
                 sessionsCompleted = sessions.size,
-                focusTime = totalFocusSeconds,
                 dailySessions = sessions.size,
                 streak = sessions.size
             )
