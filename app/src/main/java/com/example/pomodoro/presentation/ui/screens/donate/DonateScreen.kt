@@ -33,10 +33,10 @@ import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.ListItem
 
 @Composable
-fun Donate() {
-    val viewModel: DonateViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
+internal fun DonateScreen(
+    title: String,
+    message: String
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -44,8 +44,8 @@ fun Donate() {
             .fillMaxSize()
             .padding(vertical = 35.dp, horizontal = 20.dp)
     ) {
-            HeadingText(uiState.title)
-            BodyText(uiState.message)
+            HeadingText(title)
+            BodyText(message)
 
         Column(
             modifier = Modifier
@@ -83,10 +83,24 @@ fun Donate() {
     }
 }
 
+@Composable
+fun Donate() {
+    val viewModel: DonateViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    DonateScreen(
+        title = uiState.title,
+        message = uiState.message
+    )
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewDonate() {
     PomodoroTheme {
-        Donate()
+        DonateScreen(
+            title = "Support My Work",
+            message = "Your donations help me keep creating free apps!"
+        )
     }
 }
