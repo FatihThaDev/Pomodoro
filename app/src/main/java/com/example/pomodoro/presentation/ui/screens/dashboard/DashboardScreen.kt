@@ -41,6 +41,7 @@ internal fun DashboardScreen(
     isRunning: Boolean,
     isTimerFinished: Boolean,
     sessionData: SessionData,
+    showStats: Boolean = true,
     startTimer: () -> Unit,
     pauseTimer: () -> Unit,
     resetTimer: () -> Unit,
@@ -111,6 +112,7 @@ internal fun DashboardScreen(
             }
         }
 
+        if (showStats) {
         @OptIn(ExperimentalFoundationApi::class)
         stickyHeader {
             Column(
@@ -138,6 +140,7 @@ internal fun DashboardScreen(
                 }
             }
         }
+        }
     }
 }
 
@@ -153,6 +156,7 @@ fun Dashboard(username: String) {
         isRunning = uiState.isRunning,
         isTimerFinished = uiState.isTimerFinished,
         sessionData = uiState.sessionData,
+        showStats = username != "Guest",
         startTimer = { viewModel.startTimer() },
         pauseTimer = { viewModel.pauseTimer() },
         resetTimer = { viewModel.resetTimer() }

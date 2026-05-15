@@ -6,6 +6,8 @@ import com.example.pomodoro.model.di.UserSession
 import com.example.pomodoro.model.repository.SessionRepository
 import com.example.pomodoro.presentation.ui.screens.dashboard.util.SessionData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,21 +32,41 @@ class DashboardViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
 
+    private var timerJob: Job? = null
+
+    init {
+        viewModelScope.launch { loadSessionData() }
+    }
+
     fun startTimer() {
-        _uiState.value = _uiState.value.copy(isRunning = true)
-        viewModelScope.launch {
-            sessionRepository.createSession(userId = userSession.currentUserId, focusMinutes = _uiState.value.minutes)
+        if (_uiState.value.isRunning) return
+        val focusMinutes = _uiState.value.minutes
+        _uiState.value = _uiState.value.copy(isRunning = true, isTimerFinished = false)
+
+        timerJob = viewModelScope.launch {
+            var remainingSeconds = focusMinutes * 60 + _uiState.value.seconds
+            while (remainingSeconds > 0) {
+                delay(1000)
+                remainingSeconds--
+                val mins = remainingSeconds / 60
+                val secs = remainingSeconds % 60
+                _uiState.value = _uiState.value.copy(minutes = mins, seconds = secs)
+            }
+            _uiState.value = _uiState.value.copy(isRunning = false, isTimerFinished = true)
+            sessionRepository.createSession(userId = userSession.currentUserId, focusMinutes = focusMinutes)
             loadSessionData()
         }
     }
 
     fun pauseTimer() {
+        timerJob?.cancel()
         _uiState.value = _uiState.value.copy(isRunning = false)
     }
 
     fun resetTimer() {
+        timerJob?.cancel()
         _uiState.value = _uiState.value.copy(
-            minutes = 0,
+            minutes = 25,
             seconds = 0,
             isRunning = false,
             isTimerFinished = false
