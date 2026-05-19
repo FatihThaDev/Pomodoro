@@ -13,6 +13,7 @@ import com.example.pomodoro.presentation.ui.screens.dashboard.Dashboard
 import com.example.pomodoro.presentation.ui.screens.donate.Donate
 import com.example.pomodoro.presentation.ui.screens.login.Login
 import com.example.pomodoro.presentation.ui.screens.register.Register
+import java.net.URLDecoder
 
 @Composable
 fun NavGraph(
@@ -47,32 +48,20 @@ fun NavGraph(
             Donate()
         }
         composable(Screen.Login.route) {
-            Login(
-                onLoginSuccess = { username ->
-                    navController.navigate(Screen.Dashboard.createRoute(username)) {
-                        popUpTo(Screen.Login.route) { inclusive = false }
-                    }
-                }
-            )
+            Login(navController = navController)
         }
         composable(Screen.Register.route) {
-            Register(
-                onRegisterSuccess = { username ->
-                    navController.navigate(Screen.Dashboard.createRoute(username)) {
-                        popUpTo(Screen.Register.route) { inclusive = true }
-                    }
-                }
-            )
+            Register(navController = navController)
         }
         composable(
             route = Screen.ProjectDetails.route,
             arguments = listOf(
-                navArgument("label") { type = NavType.StringType },
-                navArgument("description") { type = NavType.StringType }
+                navArgument("label") { type = NavType.StringType; defaultValue = "" },
+                navArgument("desc") { type = NavType.StringType; defaultValue = "" }
             )
         ) { backStackEntry ->
-            val label = backStackEntry.arguments?.getString("label") ?: ""
-            val description = backStackEntry.arguments?.getString("description") ?: ""
+            val label = URLDecoder.decode(backStackEntry.arguments?.getString("label") ?: "", "UTF-8")
+            val description = URLDecoder.decode(backStackEntry.arguments?.getString("desc") ?: "", "UTF-8")
             ProjectDetailsScreen(
                 label = label,
                 description = description,

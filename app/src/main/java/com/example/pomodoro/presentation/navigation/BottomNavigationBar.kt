@@ -39,6 +39,11 @@ fun BottomNavigationBar(navController: NavController) {
             label = "Log In"
         ),
         BottomNavItem(
+            route = Screen.Register.route,
+            icon = { Icon(Icons.Default.Lock, contentDescription = "Register") },
+            label = "Register"
+        ),
+        BottomNavItem(
             route = Screen.Donate.route,
             icon = { Icon(Icons.Default.ShoppingCart, contentDescription = "Donate") },
             label = "Donate"

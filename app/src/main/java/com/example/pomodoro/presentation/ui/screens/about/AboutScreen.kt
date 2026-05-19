@@ -20,9 +20,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.pomodoro.presentation.view_model.AboutViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,21 +31,23 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.pomodoro.model.projectsList
 import com.example.pomodoro.presentation.theme.PomodoroTheme
 import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.ListItem
+import com.example.pomodoro.presentation.ui.screens.about.util.Project
 import com.example.pomodoro.presentation.ui.screens.about.util.filterProjects
 
 @Composable
-private fun AboutScreen(
+internal fun AboutScreen(
     searchQuery: String,
     valueChange: (String) -> Unit,
-    onProjectClick: (String, String) -> Unit
+    onProjectClick: (String, String) -> Unit,
+    version: String = "1.0.0",
+    projects: List<Project> = emptyList()
 ) {
-    val filteredProjects = remember(searchQuery) {
-        filterProjects(projectsList, searchQuery)
+    val filteredProjects = remember(searchQuery, projects) {
+        filterProjects(projects, searchQuery)
     }
 
     Column(
@@ -73,7 +76,7 @@ private fun AboutScreen(
                     )
                 }
                 item {
-                    ListItem(icon = Icons.Default.Info, label = "Version", value = "1.0.0")
+                    ListItem(icon = Icons.Default.Info, label = "Version", value = version)
                 }
                 item {
                     ListItem(icon = Icons.Default.Build, label = "License", value = "MIT")
@@ -126,14 +129,20 @@ private fun AboutScreen(
 
 @Composable
 fun About(onProjectClick: (String, String) -> Unit) {
-    var searchQuery by remember { mutableStateOf("") }
+    val viewModel: AboutViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val projectUiModels = remember(uiState.projects) {
+        uiState.projects.map { entity ->
+            Project(icon = null, label = entity.name, value = entity.description)
+        }
+    }
 
     AboutScreen(
-        searchQuery = searchQuery,
-        valueChange = {
-            searchQuery = it
-        },
-        onProjectClick = onProjectClick
+        searchQuery = uiState.searchQuery,
+        valueChange = { viewModel.onSearchQueryChange(it) },
+        onProjectClick = onProjectClick,
+        version = uiState.appVersion,
+        projects = projectUiModels
     )
 }
 
@@ -141,6 +150,10 @@ fun About(onProjectClick: (String, String) -> Unit) {
 @Composable
 private fun PreviewAbout() {
     PomodoroTheme {
-        About { _, _ -> }
+        AboutScreen(
+            searchQuery = "",
+            valueChange = {},
+            onProjectClick = { _, _ -> }
+        )
     }
 }

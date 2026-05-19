@@ -15,13 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,15 +31,18 @@ import com.example.pomodoro.presentation.ui.components.BodyText
 import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.ListItem
 import com.example.pomodoro.presentation.ui.screens.dashboard.util.SessionData
+import com.example.pomodoro.presentation.view_model.DashboardViewModel
 
 @Composable
-private fun DashboardScreen(
+internal fun DashboardScreen(
     username: String,
     minutes: Int,
     seconds: Int,
     isRunning: Boolean,
     isTimerFinished: Boolean,
     sessionData: SessionData,
+    showStats: Boolean = true,
+    startTimer: () -> Unit,
     pauseTimer: () -> Unit,
     resetTimer: () -> Unit,
 ) {
@@ -82,7 +81,7 @@ private fun DashboardScreen(
                     horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
                 ) {
                     item {
-                        Button(onClick = {}) {
+                        Button(onClick = { startTimer() }) {
                             Text("Start")
                         }
                     }
@@ -113,6 +112,7 @@ private fun DashboardScreen(
             }
         }
 
+        if (showStats) {
         @OptIn(ExperimentalFoundationApi::class)
         stickyHeader {
             Column(
@@ -135,38 +135,31 @@ private fun DashboardScreen(
                     BodyText("You didn't run any sessions yet - Start your first timer to show session data")
                 } else {
                     ListItem(label = "Sessions Completed", value = "${sessionData.sessionsCompleted}")
-                    ListItem(label = "Total Focus Time", value = "${sessionData.focusTime}s")
                     ListItem(label = "Today's Sessions", value = "${sessionData.dailySessions}")
                     ListItem(label = "Current Streak", value = "${sessionData.streak} days")
                 }
             }
+        }
         }
     }
 }
 
 @Composable
 fun Dashboard(username: String) {
-    var minutes by rememberSaveable { mutableIntStateOf(25) }
-    var seconds by rememberSaveable { mutableIntStateOf(0) }
-
-    var sessionData by remember { mutableStateOf(SessionData()) }
-
-    var isRunning by rememberSaveable { mutableStateOf(false) }
-    val isTimerFinished by remember { derivedStateOf { minutes == 0 && seconds == 0 } }
+    val viewModel: DashboardViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     DashboardScreen(
         username = username,
-        minutes = minutes,
-        seconds = seconds,
-        isRunning = isRunning,
-        isTimerFinished = isTimerFinished,
-        sessionData = sessionData,
-        pauseTimer = { isRunning = false },
-        resetTimer = {
-            minutes = 0
-            seconds = 0
-            isRunning = false
-        }
+        minutes = uiState.minutes,
+        seconds = uiState.seconds,
+        isRunning = uiState.isRunning,
+        isTimerFinished = uiState.isTimerFinished,
+        sessionData = uiState.sessionData,
+        showStats = username != "Guest",
+        startTimer = { viewModel.startTimer() },
+        pauseTimer = { viewModel.pauseTimer() },
+        resetTimer = { viewModel.resetTimer() }
     )
 }
 
@@ -182,6 +175,16 @@ private fun formatTime(time: Int): String {
 @Composable
 private fun PreviewDashboard() {
     PomodoroTheme {
-        Dashboard("guest")
+        DashboardScreen(
+            username = "guest",
+            minutes = 25,
+            seconds = 0,
+            isRunning = false,
+            isTimerFinished = false,
+            sessionData = SessionData(sessionsCompleted = 0, dailySessions = 0, streak = 0),
+            startTimer = {},
+            pauseTimer = {},
+            resetTimer = {}
+        )
     }
 }

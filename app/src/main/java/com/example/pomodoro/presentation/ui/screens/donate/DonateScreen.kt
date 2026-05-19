@@ -18,6 +18,10 @@ import androidx.compose.material.icons.twotone.CheckCircle
 import androidx.compose.material.icons.twotone.Favorite
 import androidx.compose.material.icons.twotone.Place
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.pomodoro.presentation.view_model.DonateViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +33,10 @@ import com.example.pomodoro.presentation.ui.components.HeadingText
 import com.example.pomodoro.presentation.ui.components.ListItem
 
 @Composable
-fun Donate() {
+internal fun DonateScreen(
+    title: String,
+    message: String
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -37,8 +44,8 @@ fun Donate() {
             .fillMaxSize()
             .padding(vertical = 35.dp, horizontal = 20.dp)
     ) {
-            HeadingText("Support My Work")
-            BodyText("Your donations help me keep creating free apps!")
+            HeadingText(title)
+            BodyText(message)
 
         Column(
             modifier = Modifier
@@ -76,10 +83,24 @@ fun Donate() {
     }
 }
 
+@Composable
+fun Donate() {
+    val viewModel: DonateViewModel = hiltViewModel()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    DonateScreen(
+        title = uiState.title,
+        message = uiState.message
+    )
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun PreviewDonate() {
     PomodoroTheme {
-        Donate()
+        DonateScreen(
+            title = "Support My Work",
+            message = "Your donations help me keep creating free apps!"
+        )
     }
 }
