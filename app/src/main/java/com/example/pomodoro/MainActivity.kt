@@ -24,16 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.pomodoro.presentation.navigation.BottomNavigationBar
-import com.example.pomodoro.presentation.navigation.NavGraph
-import com.example.pomodoro.presentation.navigation.Screen
-import com.example.pomodoro.presentation.theme.PomodoroTheme
-import com.example.pomodoro.presentation.ui.screens.about.About
-import com.example.pomodoro.presentation.ui.screens.dashboard.DashboardScreen
-import com.example.pomodoro.presentation.ui.screens.dashboard.util.SessionData
-import com.example.pomodoro.presentation.ui.screens.donate.Donate
-import com.example.pomodoro.presentation.ui.screens.login.LoginScreen
-import com.example.pomodoro.presentation.ui.util.Validation
+import com.example.pomodoro.ui.navigation.BottomNavigationBar
+import com.example.pomodoro.ui.navigation.NavGraph
+import com.example.pomodoro.ui.navigation.Screen
+import com.example.pomodoro.ui.theme.PomodoroTheme
+import com.example.pomodoro.ui.features.about.About
+import com.example.pomodoro.ui.features.dashboard.DashboardScreen
+import com.example.pomodoro.ui.features.dashboard.util.SessionData
+import com.example.pomodoro.ui.features.donate.Donate
+import com.example.pomodoro.ui.features.auth.LoginScreen
+import com.example.pomodoro.ui.features.auth.util.Validation
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -153,7 +153,7 @@ private fun PreviewPomodoroApp() {
 
                 }
                 "projectDetails" -> {
-                    com.example.pomodoro.presentation.ui.screens.about.ProjectDetailsScreen(
+                    com.example.pomodoro.ui.features.about.ProjectDetailsScreen(
                         label = selectedProject?.first ?: "",
                         description = selectedProject?.second ?: "",
                         onBackClick = { selectedRoute = Screen.About.route }
@@ -206,7 +206,7 @@ private fun PreviewPomodoroApp() {
                             username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() &&
                             !firstNameError && !lastNameError && !usernameError && !emailError && !passwordError
 
-                    com.example.pomodoro.presentation.ui.screens.register.RegisterScreen(
+                    com.example.pomodoro.ui.features.auth.RegisterScreen(
                         firstName = firstName,
                         firstNameChange = {
                             firstName = it
