@@ -60,8 +60,8 @@ fun NavGraph(
                 navArgument("desc") { type = NavType.StringType; defaultValue = "" }
             )
         ) { backStackEntry ->
-            val label = URLDecoder.decode(backStackEntry.arguments?.getString("label") ?: "", "UTF-8")
-            val description = URLDecoder.decode(backStackEntry.arguments?.getString("desc") ?: "", "UTF-8")
+            val label = backStackEntry.arguments?.getString("label") ?: ""
+            val description = backStackEntry.arguments?.getString("desc") ?: ""
             ProjectDetailsScreen(
                 label = label,
                 description = description,

@@ -4,16 +4,20 @@ import com.example.pomodoro.data.local.dao.SessionDao
 import com.example.pomodoro.data.local.entity.SessionEntity
 import com.example.pomodoro.data.mapper.toDomain
 import com.example.pomodoro.data.mapper.toEntity
+import com.example.pomodoro.data.remote.repository.SessionRemoteRepository
 import com.example.pomodoro.domain.model.Session
 import com.example.pomodoro.domain.repository.SessionRepository
 import javax.inject.Inject
 
 class SessionRepositoryImpl @Inject constructor(
-    private val sessionDao: SessionDao
+    private val sessionDao: SessionDao,
+    private val remoteRepository: SessionRemoteRepository
 ) : SessionRepository {
 
     override suspend fun createSession(userId: Long, focusMinutes: Int): Long {
-        return sessionDao.insert(SessionEntity(userId = userId, focusMinutes = focusMinutes))
+        val id = sessionDao.insert(SessionEntity(userId = userId, focusMinutes = focusMinutes))
+        try { remoteRepository.createSession(userId, focusMinutes) } catch (_: Exception) { }
+        return id
     }
 
     override suspend fun getSessionsByUserId(userId: Long): List<Session> {

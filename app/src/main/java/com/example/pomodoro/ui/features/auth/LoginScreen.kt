@@ -37,8 +37,6 @@ import com.example.pomodoro.ui.navigation.Screen
 import com.example.pomodoro.ui.theme.PomodoroTheme
 import com.example.pomodoro.ui.components.HeadingText
 import com.example.pomodoro.ui.features.auth.util.Validation
-import com.example.pomodoro.ui.features.auth.LoginUiState
-import com.example.pomodoro.ui.features.auth.LoginViewModel
 
 @Composable
 internal fun LoginScreen(

@@ -12,6 +12,6 @@ sealed class Screen(val route: String) {
     data object Login : Screen("login")
     data object Register : Screen("register")
     data object ProjectDetails : Screen("project?label={label}&desc={desc}") {
-        fun createRoute(label: String, description: String) = "project?label=${URLEncoder.encode(label, "UTF-8")}&desc=${URLEncoder.encode(description, "UTF-8")}"
+        fun createRoute(label: String, description: String) = "project?label=$label&desc=$description"
     }
 }
