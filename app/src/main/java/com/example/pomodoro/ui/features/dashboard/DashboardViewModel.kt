@@ -73,10 +73,6 @@ class DashboardViewModel @Inject constructor(
         )
     }
 
-    fun setUsername(name: String) {
-        _uiState.value = _uiState.value.copy(username = name)
-    }
-
     private suspend fun loadSessionData() {
         val sessions = sessionRepository.getSessionsByUserId(userSession.currentUserId)
         _uiState.value = _uiState.value.copy(

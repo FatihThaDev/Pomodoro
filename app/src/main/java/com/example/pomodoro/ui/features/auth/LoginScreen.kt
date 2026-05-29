@@ -133,7 +133,7 @@ internal fun LoginScreen(
 fun Login(navController: NavController) {
     val viewModel: LoginViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var errorMessage by rememberSaveable { mutableStateOf<String?>(null) }
 
     var username by rememberSaveable { mutableStateOf("") }
     var usernameError by rememberSaveable { mutableStateOf(false) }
@@ -141,7 +141,7 @@ fun Login(navController: NavController) {
     var password by rememberSaveable { mutableStateOf("") }
     var passwordError by rememberSaveable { mutableStateOf(false) }
 
-    val isSubmitEnabled by remember { derivedStateOf { username.isNotEmpty() && password.isNotEmpty() &&
+    val isSubmitEnabled by rememberSaveable { derivedStateOf { username.isNotEmpty() && password.isNotEmpty() &&
             !usernameError && !passwordError } }
 
     LaunchedEffect(uiState) {
